@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>MVP Demo</title>
+    <style>
+    body {
+      background-color: darkgreen;
+      }
+    form {
+      color: white;
+    }
+    h1{
+      color: white;
+    }
+    h2{
+      color: white;
+    }
+    #connection {
+      font-family: Arial, Helvetica, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #connection td, #connection th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    #connection tr:nth-child(odd){background-color: #f2f2f2;}
+    #connection tr:nth-child(even){background-color: #ffffff;}
+
+    #connection tr:hover {background-color: #ddd;}
+
+    #connection th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #4CAF50;
+      color: black;
+    }
+    </style>
+  </head>
+  <body>
+    <h1>Add a Rule</h1>
+    <form action="/add" id="textform" method="post">
+      Source IP:
+      <input type="text" name="src" placeholder = "10.0.0.x">
+      <br />
+      Destination IP:
+      <input type="text" name="dst" placeholder="10.0.0.x">
+      <br />
+      <input type = "radio" name = "actions" value = "ALLOW" checked> Allow
+      <input type = "radio" name = "actions" value = "DENY"> Deny
+      <select name="dropdown">
+          <option value="ICMP" selected>ICMP</option>
+          <option value="ICMPv6">ICMPv6</option>
+          <option value="TCP">TCP</option>
+          <option value="UDP">UDP</option>
+      </select>
+      <input type="submit" value="Post">
+    </form>
+    <br />
+
+    <a href="{{node_address}}/mine" target="_blank"><button>Validate new block</button></a>
+    <a href="/"><button>Resync</button></a>
+
+    <h2>Current Rules</h2>
+    <table id = "connection">
+    <tr class="table_row">
+      <th>IP Source</th>
+      <th>IP Destination</th>
+      <th>Protocol Type</th>
+      <th>Action</th>
+    </tr>
+    {% for rule in rules %}
+      <tr class="table_row">
+        <td>{{rule.nw_src}}</td>
+        <td>{{rule.nw_dst}}</td>
+        <td>{{rule.nw_proto}}</td>
+        <td>{{rule.actions}}</td>
+      </tr>
+    {% endfor %}
+    </table>
+  </body>
+</html>
