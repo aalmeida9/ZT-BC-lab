@@ -5,6 +5,7 @@ import time
 
 from flask import Flask, request
 import requests
+from bc import app
 
 #block could hold the information of the mac address table or flow table
 #mac address table contains the hosts connected to a switch and their ports
@@ -163,7 +164,7 @@ class Blockchain:
         return True
 
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
 # the node's copy of blockchain
 blockchain = Blockchain()
@@ -172,6 +173,10 @@ blockchain.create_genesis_block()
 # the address to other participating members of the network
 peers = set()
 
+
+@app.route('/', methods=['GET'])
+def test():
+    return 'Test'
 
 # endpoint to submit a new transaction. This will be used by
 # our application to add new data (posts) to the blockchain

@@ -7,6 +7,8 @@ from hashlib import sha256
 from flask import render_template, redirect, request
 from frontend import app
 
+#create flags for if blockchain or ryu returns 404
+
 #address to the blockchain we are interacting with
 BC_ADDRESS = "http://127.0.0.1:8000"
 
@@ -104,8 +106,8 @@ def add():
 
     #add rule to rest_firewall (validate allow actions with BC) (test this)
     address = "{}/firewall/rules/0000000000000001".format(RYU_ADDRESS)
-    requests.post(address, json=rule,
-    headers={'Content-type': 'application/json'})
+    #requests.post(address, json=rule,
+    #headers={'Content-type': 'application/json'})
 
     return redirect('/')
 
