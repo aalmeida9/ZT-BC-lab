@@ -1,15 +1,13 @@
-#for application logic
 import requests
 import json
 from hashlib import sha256
 
-#for Flask
 from flask import render_template, redirect, request
 from frontend import app
 
 #create flags for if blockchain or ryu returns 404
 
-#address to the blockchain we are interacting with
+#address to the Flask blockchain
 BC_ADDRESS = "http://127.0.0.1:8000"
 
 #address to the ryu controller
@@ -21,13 +19,11 @@ ruleList = []
 #hashes of acceptable rules (from BC)
 hashList = []
 
-#potentially create rule class based on  rule format
-#{"nw_src": "10.0.0.1/32", "nw_dst": "10.0.0.2/32", "nw_proto": "ICMP"} pings
-#rules are registered to the switch as flow entries
-
+#Rules are registered to the switch as flow entries, Rule format:
+#{"nw_src": "10.0.0.1/32", "nw_dst": "10.0.0.2/32", "nw_proto": "ICMP"}
 #make sure duplicate rules don't get added to firewall
 
-#get firewall rules from BC, change to just hashes?
+# get firewall rules from BC
 def get_rules():
     chain_address = "{}/chain".format(BC_ADDRESS)
     response = requests.get(chain_address)
@@ -46,20 +42,22 @@ def get_rules():
     else:
         print("Unable to access blockchain {}".format(response.status_code))
 
-#configure SDN firewall with rules from BC, current method works (not used)
 #still need to enable communication manually on Firewall:
 #put http://localhost:8080/firewall/module/enable/0000000000000001
+# Example method to configure  firewall with rules based on BC
 def post_rules():
     address = "{}/firewall/rules/0000000000000001".format(RYU_ADDRESS)
     rule = {"nw_src": "10.0.0.1/32", "nw_dst": "10.0.0.2/32", "nw_proto": "ICMP"}
     r = requests.post(address, data=rule)
 
-
+# "Homepage"
 @app.route("/")
 def index():
     get_rules()
     return render_template('index.html', title="index",
     node_address = BC_ADDRESS, ryu_address = RYU_ADDRESS, rules = ruleList)
+
+# create a route for an overview of the network (topology)
 
 #route for adding rules from the form to the BC/Controller
 @app.route("/add", methods=['POST'])
@@ -106,16 +104,8 @@ def add():
 
     #add rule to rest_firewall (validate allow actions with BC) (test this)
     address = "{}/firewall/rules/0000000000000001".format(RYU_ADDRESS)
+    # POST request commented out for testing
     #requests.post(address, json=rule,
     #headers={'Content-type': 'application/json'})
 
     return redirect('/')
-
-#initial test for viewing chain
-@app.route("/test")
-def test():
-    address = "{}/chain".format(BC_ADDRESS)
-    r = requests.get(address)
-    #print(json.loads(r.content))
-
-    return 'test'
