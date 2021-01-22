@@ -1,9 +1,16 @@
 # Python file for Single Sign On (SSO) to be used by Ryu
 
+# OpenFlow Protocol
+# https://osrg.github.io/ryu-book/en/html/openflow_protocol.html
+# https://osrg.github.io/ryu-book/en/html/switch_test_tool.html
+
 # Notes for Ryu:
-# Useful resources:
 # https://inside-openflow.com/2016/07/21/ryu-api-dissecting-simple-switch/
 # https://inside-openflow.com/2016/08/05/ryu-api-reimagining-simple-switch/
+
+# WSGI/REST
+# https://osrg.github.io/ryu-book/en/html/rest_api.html
+# https://ryu.readthedocs.io/en/latest/app/ofctl_rest.html
 
 # Imports
 from ryu.base import app_manager
@@ -16,7 +23,7 @@ from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
 
 # currently a copy of the SimpleSwitch13.py Ryu app
-# build on this with additional methods 
+# build on this with additional methods
 class SSO(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
 
@@ -124,3 +131,7 @@ class SSO(app_manager.RyuApp):
     # SSO
 
     # Identity Access & Managment (IAM)
+
+    # Link SSO to frontend, reference ws_topology.py
+
+    # Create Logs, reference SimpleMonitor13

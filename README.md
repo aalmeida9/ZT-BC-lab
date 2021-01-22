@@ -8,6 +8,11 @@ Ubuntu 18.04 is currently used for the development environment
 # clone and enter repository
 $ git clone https://github.com/aalmeida9/ZT-BC-lab
 $ cd ZT-BC-lab
+# setup and enter python virtual environment (optional)
+$ python3 -m venv venv
+$ source venv/bin/activate
+# install required python packages
+$ pip install -e .
 ```
 
 ## Flask Applications
@@ -19,9 +24,7 @@ Each of the following blocks of commands need to be run in different terminals i
 ### Blockchain startup
 
 ```sh
-$ export FLASK_APP=node_server.py
-$ export FLASK_ENV=development
-$ flask run --port 8000
+$ python runBC.py
 ```
 
 ### Frontend Web server

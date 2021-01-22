@@ -5,11 +5,15 @@ from hashlib import sha256
 from flask import render_template, redirect, request
 from frontend import app
 
+#Priority tasks:
+#use a css template for the frontend possibly bootstrap
+#make a page to view topology 
+#research flask resources that would demonstrate network/security capabilities
 #create flags for if blockchain or ryu returns 404
+
 
 #address to the Flask blockchain
 BC_ADDRESS = "http://127.0.0.1:8000"
-
 #address to the ryu controller
 RYU_ADDRESS = "http://0.0.0.0:8080"
 #alternatives "http://127.0.0.1:8080" "http://localhost:8080"
@@ -42,14 +46,6 @@ def get_rules():
     else:
         print("Unable to access blockchain {}".format(response.status_code))
 
-#still need to enable communication manually on Firewall:
-#put http://localhost:8080/firewall/module/enable/0000000000000001
-# Example method to configure  firewall with rules based on BC
-def post_rules():
-    address = "{}/firewall/rules/0000000000000001".format(RYU_ADDRESS)
-    rule = {"nw_src": "10.0.0.1/32", "nw_dst": "10.0.0.2/32", "nw_proto": "ICMP"}
-    r = requests.post(address, data=rule)
-
 # "Homepage"
 @app.route("/")
 def index():
@@ -58,6 +54,7 @@ def index():
     node_address = BC_ADDRESS, ryu_address = RYU_ADDRESS, rules = ruleList)
 
 # create a route for an overview of the network (topology)
+# have a button link to the topology on the homepage
 
 #route for adding rules from the form to the BC/Controller
 @app.route("/add", methods=['POST'])
@@ -109,3 +106,11 @@ def add():
     #headers={'Content-type': 'application/json'})
 
     return redirect('/')
+    
+#still need to enable communication manually on Firewall:
+#put http://localhost:8080/firewall/module/enable/0000000000000001
+# Example method to configure  firewall with rules based on BC
+def post_rules():
+    address = "{}/firewall/rules/0000000000000001".format(RYU_ADDRESS)
+    rule = {"nw_src": "10.0.0.1/32", "nw_dst": "10.0.0.2/32", "nw_proto": "ICMP"}
+    r = requests.post(address, data=rule)
