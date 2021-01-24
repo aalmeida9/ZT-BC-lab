@@ -2,17 +2,23 @@
 
 ## Project setup
 
-Ubuntu 18.04 is currently used for the development environment
+Ubuntu 18.04 is currently used for the development environment. Make project setup executable script
 
 ```sh
 # clone and enter repository
-$ git clone https://github.com/aalmeida9/ZT-BC-lab
+$ git clone https://github.com/aalmeida9/ZT-BC-lab --recursive
+# if you cloned the repository without --recursive run:
+# git submodule update --init --recursive
 $ cd ZT-BC-lab
 # setup and enter python virtual environment (optional)
 $ python3 -m venv venv
 $ source venv/bin/activate
 # install required python packages
 $ pip install -e .
+# Install Mininet
+$ sudo apt-get install mininet
+# Install Ryu
+$ cd ryu; pip install .
 ```
 
 ## Flask Applications
@@ -33,18 +39,25 @@ $ python runBC.py
 $ python runFrontend.py
 ```
 
-## Network Emulation
+## Network
+
+### Network Emulation
 
 Network emulation uses Mininet. More information can be found here: http://mininet.org/
 
 ```sh
+# Run network emulation and create topology from command line
 $ sudo mn --topo single,3 --mac --switch ovsk --controller remote
+# Run net from file, new
+$ chmod a+x ./net.py # Makes script executable, only needed once
+$ sudo ./net.py
 ```
 
-## Software Defined Networking (SDN) Controller
+### Software Defined Networking (SDN) Controller
 
-SDN controller use the Ryu framework for the firewall application. More information can be found here: https://ryu-sdn.org/
+SDN controller currently uses the Ryu framework for the firewall application. More information can be found here: https://ryu-sdn.org/
 
 ```sh
-$ ryu-manager ryu.app.rest_firewall
+# switching to SSO.py
+$ ryu-manager ryu.app.rest_firewall # possibly include: ryu.app.ofctl_rest
 ```

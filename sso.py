@@ -28,11 +28,10 @@ class SSO(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
 
     def __init__(self, *args, **kwargs):
-        super(SimpleSwitch13, self).__init__(*args, **kwargs)
+        super(SSO, self).__init__(*args, **kwargs)
         self.mac_to_port = {}
 
-    # OpenFlow Events
-    # Event for when a switch is added to the controller
+    # OpenFlow Event for when a switch is added to the controller
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
         datapath = ev.msg.datapath
