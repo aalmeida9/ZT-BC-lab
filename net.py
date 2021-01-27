@@ -1,6 +1,6 @@
 """
-From: https://inside-openflow.com/2016/06/29/custom-mininet-topologies-and-introducing-atom/
 A simple minimal topology script for Mininet.
+From: https://inside-openflow.com/2016/06/29/custom-mininet-topologies-and-introducing-atom/
 
 Based in part on examples in the [Introduction to Mininet] page on the Mininet's
 project wiki.
@@ -16,14 +16,25 @@ from mininet.net import Mininet
 from mininet.topo import Topo #MultiGraph tracks topology changes
 from mininet.node import RemoteController, OVSSwitch
 
-# Superclass of node for additional attributes
-class AuthHost(host):
-    def __init__(self, password):
-        self.password = password
-        #Not sure if correct
-        super(AuthHost, self).__init__()
+# Resources:
+# API reference manual
+# http://mininet.org/api/classmininet_1_1topo_1_1Topo.html
 
-# Once the AuthHost class functions addHost possibly needs to be modifyed to work with it
+# Run a simple web server and client
+# http://mininet.org/walkthrough/#display-startup-options
+
+# Flow analytics
+# https://blog.sflow.com/2019/06/mininet-flow-analytics-with-custom.html
+
+# Running processes on the nodes
+# https://github.com/mininet/mininet/wiki/Introduction-to-Mininet#creating-topologies
+
+# Superclass of node for additional attributes, not working
+# class secureHost( addHost ):
+#     def __init__(self, password):
+#         self.password = password
+#         #Not sure if correct
+#         super(secureHost, self).__init__()
 
 class MinimalTopo( Topo ):
     "Minimal topology with a single switch and two hosts"
@@ -65,7 +76,7 @@ def runMinimalTopo():
 
 if __name__ == '__main__':
     # This runs if this file is executed directly
-    setLogLevel( 'info' )
+    setLogLevel( 'info' ) # can also use 'debug'
     runMinimalTopo()
 
 # Allows the file to be imported using `mn --custom <filename> --topo minimal`

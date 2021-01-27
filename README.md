@@ -49,8 +49,7 @@ Network emulation uses Mininet. More information can be found here: http://minin
 # Run network emulation and create topology from command line
 $ sudo mn --topo single,3 --mac --switch ovsk --controller remote
 # Run net from file, new
-$ chmod a+x ./net.py # Makes script executable, only needed once
-$ sudo ./net.py
+$ sudo python net.py
 ```
 
 ### Software Defined Networking (SDN) Controller
