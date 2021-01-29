@@ -7,7 +7,7 @@ from frontend import app
 
 #Priority tasks:
 #use a css template for the frontend possibly bootstrap
-#make a page to view topology 
+#make a page to view topology
 #research flask resources that would demonstrate network/security capabilities
 #create flags for if blockchain or ryu returns 404
 
@@ -29,10 +29,12 @@ hashList = []
 
 # get firewall rules from BC
 def get_rules():
-    chain_address = "{}/chain".format(BC_ADDRESS)
-    response = requests.get(chain_address)
+    chain_address = ""
+    response = ""
+    try:
+        chain_address = "{}/chain".format(BC_ADDRESS)
+        response = requests.get(chain_address)
 
-    if response.status_code == 200:
         #chain is a dict response.content is bytes
         chain = json.loads(response.content)
         for block in chain["chain"]:
@@ -43,8 +45,9 @@ def get_rules():
                 else:
                     if rule not in ruleList:
                         ruleList.append(rule)
-    else:
-        print("Unable to access blockchain {}".format(response.status_code))
+    except requests.exceptions.RequestException as e:    # This is the correct syntax
+        print(e)
+        #print("Unable to access blockchain {}".format(response.status_code))
 
 # "Homepage"
 @app.route("/")
@@ -106,7 +109,7 @@ def add():
     #headers={'Content-type': 'application/json'})
 
     return redirect('/')
-    
+
 #still need to enable communication manually on Firewall:
 #put http://localhost:8080/firewall/module/enable/0000000000000001
 # Example method to configure  firewall with rules based on BC
