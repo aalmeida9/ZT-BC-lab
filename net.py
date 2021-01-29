@@ -29,20 +29,18 @@ from mininet.node import RemoteController, OVSSwitch
 # Running processes on the nodes
 # https://github.com/mininet/mininet/wiki/Introduction-to-Mininet#creating-topologies
 
-# Superclass of node for additional attributes, not working
-# class secureHost( addHost ):
-#     def __init__(self, password):
-#         self.password = password
-#         #Not sure if correct
-#         super(secureHost, self).__init__()
-
 class MinimalTopo( Topo ):
     "Minimal topology with a single switch and two hosts"
     # Consider using LinearTopo
     def build( self ):
         # Create two hosts.
-        h1 = self.addHost( 'h1' )
+        h1 = self.addHost( 'h1', password = "test" )
         h2 = self.addHost( 'h2' )
+        # password is passed as an option to addHost not sure how to use it see more below 
+        # https://github.com/mininet/mininet/blob/master/mininet/topo.py
+        # https://github.com/mininet/mininet/blob/715db45b9dcd9bcf0ffc9bb4211808217276e664/mininet/topo.py#L26
+
+        #print(h2.__mro__)
 
         # Create a switch
         s1 = self.addSwitch( 's1' )
