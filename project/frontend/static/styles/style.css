@@ -1,0 +1,35 @@
+body {
+  background-color: darkgreen;
+  }
+form {
+  color: white;
+}
+h1{
+  color: white;
+}
+h2{
+  color: white;
+}
+#connection {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#connection td, #connection th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#connection tr:nth-child(odd){background-color: #f2f2f2;}
+#connection tr:nth-child(even){background-color: #ffffff;}
+
+#connection tr:hover {background-color: #ddd;}
+
+#connection th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: black;
+}
