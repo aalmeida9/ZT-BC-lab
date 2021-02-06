@@ -13,6 +13,7 @@
 # https://ryu.readthedocs.io/en/latest/app/ofctl_rest.html
 
 # Imports
+from ryu.app import simple_switch_13
 from ryu.base import app_manager
 from ryu.controller import ofp_event
 from ryu.controller.handler import CONFIG_DISPATCHER, MAIN_DISPATCHER
@@ -22,6 +23,9 @@ from ryu.lib.packet import packet
 from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
 
+import array as arr
+
+
 # currently a copy of the SimpleSwitch13.py Ryu app
 # build on this with additional methods
 class SSO(app_manager.RyuApp):
@@ -30,6 +34,9 @@ class SSO(app_manager.RyuApp):
     def __init__(self, *args, **kwargs):
         super(SSO, self).__init__(*args, **kwargs)
         self.mac_to_port = {}
+        # Need to hash passwords at some point to ensure confidentiality
+        # Table for passwords to MAC addresses
+        # self.pass_to_port = {}
 
     # OpenFlow Event for when a switch is added to the controller
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
@@ -79,6 +86,15 @@ class SSO(app_manager.RyuApp):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
         in_port = msg.match['in_port']
+
+        # from ryu/doc/library_packet.rst, prints raw packet data
+        pkt = packet.Packet(arr.array('B', ev.msg.data))
+        for p in pkt.protocols:
+            print(p)
+            # print p.protocol_name, p
+            # if p.protocol_name == 'vlan':
+            #     print 'vid = ', p.vid
+        # see library_packet.rst for building a packet as well
 
         pkt = packet.Packet(msg.data)
         eth = pkt.get_protocols(ethernet.ethernet)[0]
