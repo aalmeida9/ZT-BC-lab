@@ -36,6 +36,7 @@ $ python runBC.py
 ### Frontend Web server
 
 ```sh
+$ cd project
 $ python runFrontend.py
 ```
 

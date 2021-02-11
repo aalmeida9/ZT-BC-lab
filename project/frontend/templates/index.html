@@ -1,51 +1,171 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <title>ZT BC Lab</title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
-  </head>
-  <body>
-    <h1>Add a Rule</h1>
-    <form action="/add" id="textform" method="post">
-      Source IP:
-      <input type="text" name="src" placeholder = "10.0.0.x">
-      <br />
-      Destination IP:
-      <input type="text" name="dst" placeholder="10.0.0.x">
-      <br />
-      <input type = "radio" name = "actions" value = "ALLOW" checked> Allow
-      <input type = "radio" name = "actions" value = "DENY"> Deny
-      <select name="dropdown">
-          <option value="ICMP" selected>ICMP</option>
-          <option value="ICMPv6">ICMPv6</option>
-          <option value="TCP">TCP</option>
-          <option value="UDP">UDP</option>
-      </select>
-      <input type="submit" value="Post">
-    </form>
-    <br />
+<head>
+<title>Main Hub</title>
+<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
 
-    <a href="{{node_address}}/mine" target="_blank"><button>Validate new block</button></a>
-    <a href="/"><button>Resync</button></a>
+<link rel="stylesheet" type="text/css" href="styles/style.css" media="screen"/>
 
-    <h2>Current Rules</h2>
-    <table id = "connection">
-    <tr class="table_row">
-      <th>IP Source</th>
-      <th>IP Destination</th>
-      <th>Protocol Type</th>
-      <th>Action</th>
-    </tr>
-    {% for rule in rules %}
-      <tr class="table_row">
-        <td>{{rule.nw_src}}</td>
-        <td>{{rule.nw_dst}}</td>
-        <td>{{rule.nw_proto}}</td>
-        <td>{{rule.actions}}</td>
-      </tr>
-    {% endfor %}
-    </table>
-  </body>
-</html>
+<style>
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+body {
+  background-color: white;
+}
+
+h1{
+  color: black;
+}
+h2{
+  color: black;
+}
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  width: 100%;
+}
+
+
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.container {
+  padding: 2px 16px;
+  text-align: center
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Float four columns side by side */
+.column {
+  float: left;
+  width: 33%;
+  padding: 0 10px;
+  margin-bottom: 20px;
+}
+
+/* Remove extra left and right margins, due to padding */
+.row {margin: 0 -5px;}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive columns */
+@media screen and (max-width: 700px) {
+  .column {
+    width: 100%;
+    display: block;
+    margin-bottom: 20px;
+  }
+}
+
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <a class="active" href="index.html">Main Hub</a>
+  <a href="rulespage.html">Rules</a>
+  <a href="#">Placeholder3</a>
+  <a href="#">Placeholder4</a>
+</div>
+
+<h1>MAIN HUB</h1>
+
+<h2>Content Distribution</h2>
+
+<div class = "row">
+  <div class = "column">
+    <div class="card">
+      <img src="network1.png" alt="Add rules" style="width:100%">
+      <div class="container">
+        <h4><b>Network Rules</b></h4> 
+        <p>Allows the administrator to add rules that define the tenets of our zero trust implementation.</p>
+        <a href = "rulespage.html"><button type="button" class="button" onClick="alert('Opens a New Page')">Change Rules</button></a>
+      </div>
+    </div>
+  </div>
+  
+  <div class ="column">
+    <div class="card">
+      <img src="img_avatar.png" alt="Avatar" style="width:100%">
+      <div class="container">
+        <h4><b>Title Placeholder</b></h4> 
+        <p>Description</p>
+        <button type="button" class="button" onClick="alert('Opens a New Page')">Button</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class ="column">
+    <div class="card">
+      <img src="img_avatar.png" alt="Avatar" style="width:100%">
+      <div class="container">
+        <h4><b>Title Placeholder</b></h4> 
+        <p>Description</p> 
+        <button type="button" class="button" onClick="alert('Opens a New Page')">Button</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class ="column">
+    <div class="card">
+      <img src="img_avatar.png" alt="Avatar" style="width:100%">
+      <div class="container">
+        <h4><b>Title Placeholder</b></h4> 
+        <p>Description</p>
+	<button type="button" class="button" onClick="alert('Opens a New Page')">Button</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html> 
