@@ -2,8 +2,10 @@ import requests
 import json
 from hashlib import sha256
 
-from flask import render_template, redirect, request
+from flask import Blueprint, render_template, redirect, request
 from frontend import app
+
+#Flask blueprints
 
 #Priority tasks:
 #use a css template for the frontend possibly bootstrap
@@ -51,10 +53,23 @@ def get_rules():
 
 # "Homepage"
 @app.route("/")
+@app.route("/index.html")
 def index():
+    return render_template('index.html')
+
+# "Demonstrator Page"
+@app.route("/demo")
+@app.route("/demo.html")
+def demo():
     get_rules()
-    return render_template('index.html', title="index",
+    return render_template('demo.html',
     node_address = BC_ADDRESS, ryu_address = RYU_ADDRESS, rules = ruleList)
+
+# "Admin Page"
+@app.route("/admin")
+@app.route("/admin.html")
+def admin():
+    return render_template('admin.html')
 
 # create a route for an overview of the network (topology)
 # have a button link to the topology on the homepage
