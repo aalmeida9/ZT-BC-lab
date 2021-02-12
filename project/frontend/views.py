@@ -13,7 +13,6 @@ from frontend import app
 #research flask resources that would demonstrate network/security capabilities
 #create flags for if blockchain or ryu returns 404
 
-
 #address to the Flask blockchain
 BC_ADDRESS = "http://127.0.0.1:8000"
 #address to the ryu controller
@@ -28,28 +27,6 @@ hashList = []
 #Rules are registered to the switch as flow entries, Rule format:
 #{"nw_src": "10.0.0.1/32", "nw_dst": "10.0.0.2/32", "nw_proto": "ICMP"}
 #make sure duplicate rules don't get added to firewall
-
-# get firewall rules from BC
-def get_rules():
-    chain_address = ""
-    response = ""
-    try:
-        chain_address = "{}/chain".format(BC_ADDRESS)
-        response = requests.get(chain_address)
-
-        #chain is a dict response.content is bytes
-        chain = json.loads(response.content)
-        for block in chain["chain"]:
-            for rule in block["transactions"]:
-                #inital logic for getting rule hashes on genesis block
-                if block["index"] == 0:
-                    hashList.append(rule)
-                else:
-                    if rule not in ruleList:
-                        ruleList.append(rule)
-    except requests.exceptions.RequestException as e:    # This is the correct syntax
-        print(e)
-        #print("Unable to access blockchain {}".format(response.status_code))
 
 # "Homepage"
 @app.route("/")
@@ -70,6 +47,12 @@ def demo():
 @app.route("/admin.html")
 def admin():
     return render_template('admin.html')
+
+# "About Page"
+@app.route("/about")
+@app.route("/about.html")
+def about():
+    return render_template('about.html')
 
 # create a route for an overview of the network (topology)
 # have a button link to the topology on the homepage
@@ -124,6 +107,28 @@ def add():
     #headers={'Content-type': 'application/json'})
 
     return redirect('/')
+
+# get firewall rules from BC
+def get_rules():
+    chain_address = ""
+    response = ""
+    try:
+        chain_address = "{}/chain".format(BC_ADDRESS)
+        response = requests.get(chain_address)
+
+        #chain is a dict response.content is bytes
+        chain = json.loads(response.content)
+        for block in chain["chain"]:
+            for rule in block["transactions"]:
+                #inital logic for getting rule hashes on genesis block
+                if block["index"] == 0:
+                    hashList.append(rule)
+                else:
+                    if rule not in ruleList:
+                        ruleList.append(rule)
+    except requests.exceptions.RequestException as e:    # This is the correct syntax
+        print(e)
+        #print("Unable to access blockchain {}".format(response.status_code))
 
 #still need to enable communication manually on Firewall:
 #put http://localhost:8080/firewall/module/enable/0000000000000001
