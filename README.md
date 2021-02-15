@@ -58,6 +58,6 @@ $ sudo python net.py
 SDN controller currently uses the Ryu framework for the firewall application. More information can be found here: https://ryu-sdn.org/
 
 ```sh
-# switching to SSO.py
-$ ryu-manager ryu.app.rest_firewall # possibly include: ryu.app.ofctl_rest
+# Old: ryu-manager ryu.app.rest_firewall
+$ ryu-manager sso.py ryu.app.ofctl_rest
 ```

@@ -11,6 +11,7 @@
 # WSGI/REST
 # https://osrg.github.io/ryu-book/en/html/rest_api.html
 # https://ryu.readthedocs.io/en/latest/app/ofctl_rest.html
+# https://readthedocs.org/projects/ryu-hisaharu/downloads/pdf/ofctl_rest-add_some_messages/
 
 # Imports
 from ryu.app import simple_switch_13
@@ -23,6 +24,9 @@ from ryu.lib.packet import packet
 from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
 
+#import rest api
+import ryu.app.ofctl.api
+#used for printing raw packet data
 import array as arr
 
 

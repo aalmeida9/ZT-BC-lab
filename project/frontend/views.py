@@ -132,7 +132,9 @@ def get_rules():
 
 #still need to enable communication manually on Firewall:
 #put http://localhost:8080/firewall/module/enable/0000000000000001
+
 # Example method to configure  firewall with rules based on BC
+# Add RequestExcept like above
 def post_rules():
     address = "{}/firewall/rules/0000000000000001".format(RYU_ADDRESS)
     rule = {"nw_src": "10.0.0.1/32", "nw_dst": "10.0.0.2/32", "nw_proto": "ICMP"}
