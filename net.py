@@ -7,18 +7,26 @@ project wiki.
 
 [Introduction to Mininet]: https://github.com/mininet/mininet/wiki/Introduction-to-Mininet#apilevels
 
-Need to make a superclass of the node/host class and add info for authentication
+Main Ideas:
+Use a decorator, @, to add functionality to password argument
+Potentially easier add a class/method that allows the password argument to be sent with request library
+Alternative Ideas:
+Start by having two seperate switches and configuring SSO with switches datapth id
+Possibly configure packet with additional information after it is received from the switch
 """
 
 from mininet.cli import CLI
 from mininet.log import setLogLevel
+from mininet.util import dumpNodeConnections
+
 from mininet.net import Mininet
 from mininet.topo import Topo #MultiGraph tracks topology changes
 from mininet.node import RemoteController, OVSSwitch
 
+
 # Resources:
-# API reference manual
-# http://mininet.org/api/classmininet_1_1topo_1_1Topo.html
+# Running processes on the nodes, really useful intro to mininet
+# https://github.com/mininet/mininet/wiki/Introduction-to-Mininet#creating-topologies
 
 # Run a simple web server and client
 # http://mininet.org/walkthrough/#display-startup-options
@@ -26,17 +34,20 @@ from mininet.node import RemoteController, OVSSwitch
 # Flow analytics
 # https://blog.sflow.com/2019/06/mininet-flow-analytics-with-custom.html
 
-# Running processes on the nodes
-# https://github.com/mininet/mininet/wiki/Introduction-to-Mininet#creating-topologies
+# API reference "manual"
+# http://mininet.org/api/classmininet_1_1topo_1_1Topo.html
+
 
 class MinimalTopo( Topo ):
     "Minimal topology with a single switch and two hosts"
-    # Consider using LinearTopo
+
+    #@addHost @addLink
+
     def build( self ):
         # Create two hosts.
         h1 = self.addHost( 'h1', password = "test" )
         h2 = self.addHost( 'h2' )
-        # password is passed as an option to addHost not sure how to use it see more below 
+        # password is passed as an option to addHost not sure how to use it see more below
         # https://github.com/mininet/mininet/blob/master/mininet/topo.py
         # https://github.com/mininet/mininet/blob/715db45b9dcd9bcf0ffc9bb4211808217276e664/mininet/topo.py#L26
 
@@ -66,8 +77,21 @@ def runMinimalTopo():
     # Actually start the network
     net.start()
 
+    print "Dumping host connections"
+    dumpNodeConnections(net.hosts)
+
+    h1 = net.get('h1')
+    result = h1.cmd('ifconfig')
+    print result
+
+    #Interesting wait for a command to finish executing, only UNIX commands
+    #pid = int( h1.cmd('echo $!') )
+    #h1.cmd('wait', pid)
+
+
+
     # Drop the user in to a CLI so user can run commands.
-    CLI( net )
+    # CLI( net )
 
     # After the user exits the CLI, shutdown the network.
     net.stop()
