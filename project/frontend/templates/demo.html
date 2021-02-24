@@ -17,6 +17,11 @@
         <a href="about.html">About the Project</a>
     </div>
     <!-- <p>Create buttons for displaying net info with ofctl_rest, add a form to enter custom REST commands</p> -->
+
+  </tr>
+  {% for ip in ips %}
+  <p>{{ip}}</p>
+  {% endfor %}
 </body>
 
 </html>

@@ -24,6 +24,9 @@ ruleList = []
 #hashes of acceptable rules (from BC)
 hashList = []
 
+#ips received from the network
+ipList = []
+
 #Rules are registered to the switch as flow entries, Rule format:
 #{"nw_src": "10.0.0.1/32", "nw_dst": "10.0.0.2/32", "nw_proto": "ICMP"}
 #make sure duplicate rules don't get added to firewall
@@ -40,19 +43,28 @@ def index():
 def demo():
     get_rules()
     return render_template('demo.html',
-    node_address = BC_ADDRESS, ryu_address = RYU_ADDRESS, rules = ruleList)
+    ips = ipList)
 
 # "Admin Page"
 @app.route("/admin")
 @app.route("/admin.html")
 def admin():
-    return render_template('admin.html')
+    return render_template('admin.html',
+    node_address = BC_ADDRESS, ryu_address = RYU_ADDRESS, rules = ruleList)
 
 # "About Page"
 @app.route("/about")
 @app.route("/about.html")
 def about():
     return render_template('about.html')
+
+# Get IP from hosts
+@app.route("/getip", methods=['POST', 'GET'])
+def getip():
+    print(request.data)
+    ipList.append(request.data)
+    return '0'
+
 
 # create a route for an overview of the network (topology)
 # have a button link to the topology on the homepage
