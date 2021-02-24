@@ -5,10 +5,7 @@ from hashlib import sha256
 from flask import Blueprint, render_template, redirect, request
 from frontend import app
 
-#Flask blueprints
-
 #Priority tasks:
-#use a css template for the frontend possibly bootstrap
 #make a page to view topology
 #research flask resources that would demonstrate network/security capabilities
 #create flags for if blockchain or ryu returns 404
@@ -58,11 +55,13 @@ def admin():
 def about():
     return render_template('about.html')
 
-# Get IP from hosts
-@app.route("/getip", methods=['POST', 'GET'])
+# Get IP from hosts, potentially add a GET method for sending IPs to Ryu or BC
+@app.route("/getip", methods=['POST'])
 def getip():
-    print(request.data)
-    ipList.append(request.data)
+    # Need to process Dictionary, ip
+    ip = json.loads(request.json)
+    print(ip)
+    ipList.append(ip)
     return '0'
 
 

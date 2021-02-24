@@ -16,6 +16,8 @@ Possibly configure packet with additional information after it is received from 
 """
 
 import requests
+import json
+
 
 from mininet.cli import CLI
 from mininet.log import setLogLevel
@@ -80,25 +82,34 @@ def runMinimalTopo():
     # Actually start the network
     net.start()
 
-    print("Dumping host connections")
-    dumpNodeConnections(net.hosts)
-
-    h1 = net.get('h1')
-    ip = h1.IP()
-
-    result = h1.cmd('ifconfig')
-    print(result)
-
-    #send host ip POST request, test
-    test = requests.post('http://0.0.0.0:5000/getip', data = ip)
-    print(test.status_code)
-    print(test.text)
-
-    #exit if flask returns 0 or some specific value (or status_code != 200)
-
+    # Interesting
+    # print("Dumping host connections")
+    # dumpNodeConnections(net.hosts)
+    # result = h1.cmd('ifconfig')
+    # print(result)
     #Interesting wait for a command to finish executing, only UNIX commands
     #pid = int( h1.cmd('echo $!') )
     #h1.cmd('wait', pid)
+
+    hosts = net.hosts
+
+    for h in hosts:
+        #create JSON object of host: ip
+        ip = json.dumps({h.name: h.IP()})
+        #send host ip POST request
+        response = requests.post('http://0.0.0.0:5000/getip', json=ip,
+        headers={'Content-type': 'application/json'})
+        #Exit if request isn't properly executed
+        if(response.status_code != 200 or response.text != "0"):
+            print("Error sending host/ip configurations to frontned")
+            print(response.status_code)
+            net.stop()
+
+    # h1 = net.get('h1')
+    # ip = h1.IP()
+    # ip = json.dumps({'h1': ip})
+
+
 
     # Drop the user in to a CLI so user can run commands.
     #CLI( net )
