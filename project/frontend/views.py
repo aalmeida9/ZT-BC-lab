@@ -23,6 +23,9 @@ hashList = []
 
 #ips received from the network
 ipList = []
+#users are hosts that have been configured with the Blockchain
+#initally implement CA with just hashes then move onto public/private key
+userList = []
 
 #Rules are registered to the switch as flow entries, Rule format:
 #{"nw_src": "10.0.0.1/32", "nw_dst": "10.0.0.2/32", "nw_proto": "ICMP"}
@@ -40,7 +43,7 @@ def index():
 def demo():
     get_rules()
     return render_template('demo.html',
-    ips = ipList)
+    ips = ipList, users = userList)
 
 # "Admin Page"
 @app.route("/admin")
@@ -61,6 +64,9 @@ def getip():
     # Need to process Dictionary, ip
     ip = json.loads(request.json)
     print(ip)
+    #for key, value in ip.items():
+    #    print key, value
+
     ipList.append(ip)
     return '0'
 

@@ -95,7 +95,7 @@ def runMinimalTopo():
 
     for h in hosts:
         #create JSON object of host: ip
-        ip = json.dumps({h.name: h.IP()})
+        ip = json.dumps({h.name: (h.IP(), h.MAC())})
         #send host ip POST request
         response = requests.post('http://0.0.0.0:5000/getip', json=ip,
         headers={'Content-type': 'application/json'})

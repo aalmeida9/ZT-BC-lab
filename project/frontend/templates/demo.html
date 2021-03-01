@@ -19,9 +19,16 @@
     <!-- <p>Create buttons for displaying net info with ofctl_rest, add a form to enter custom REST commands</p> -->
 
   </tr>
-  {% for ip in ips %}
-  <p>{{ip}}</p>
-  {% endfor %}
+  <h1>Unconfigured Network Hosts</h1>
+  <form action="/add" id="textform" method="post">
+    {% for ip in ips %}
+      <input type="radio" name="actions" value="ALLOW" /> {{ip}}
+    {% endfor %}
+    <input type="submit" value="Post">
+  </form>
+  <h1>Configured Network Hosts</h1>
+
+
 </body>
 
 </html>

@@ -92,9 +92,10 @@ class SSO(app_manager.RyuApp):
         in_port = msg.match['in_port']
 
         # from ryu/doc/library_packet.rst, prints raw packet data
-        pkt = packet.Packet(arr.array('B', ev.msg.data))
-        for p in pkt.protocols:
-            print(p)
+        # pkt = packet.Packet(arr.array('B', ev.msg.data))
+        # for p in pkt.protocols:
+        #     print(p)
+        #     print(type(p))
             # print p.protocol_name, p
             # if p.protocol_name == 'vlan':
             #     print 'vid = ', p.vid
@@ -109,10 +110,13 @@ class SSO(app_manager.RyuApp):
         dst = eth.dst
         src = eth.src
 
+        #print("Packet Source: {} Destination: {}".format(src, dst))
+
         #configure MAC-to-Port table
         dpid = datapath.id
         self.mac_to_port.setdefault(dpid, {})
 
+        #src dest are mac addresses
         self.logger.info("packet in %s %s %s %s", dpid, src, dst, in_port)
 
         # learn a mac address to avoid FLOOD next time.
