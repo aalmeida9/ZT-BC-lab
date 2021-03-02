@@ -17,6 +17,8 @@ class Block:
     def __init__(self, index, transactions, timestamp, previous_hash, nonce=0):
         self.index = index
         self.transactions = transactions
+        #Need relevant attributes of host, start with MAC address
+        #consider public private key
         self.timestamp = timestamp
         self.previous_hash = previous_hash
         self.nonce = nonce

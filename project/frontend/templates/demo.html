@@ -18,16 +18,48 @@
     </div>
     <!-- <p>Create buttons for displaying net info with ofctl_rest, add a form to enter custom REST commands</p> -->
 
-  </tr>
-  <h1>Unconfigured Network Hosts</h1>
+  <h1>Network Hosts</h1>
   <form action="/add" id="textform" method="post">
-    {% for ip in ips %}
-      <input type="radio" name="actions" value="ALLOW" /> {{ip}}
-    {% endfor %}
+    <table id="connection">
+        <tr class="table_row">
+            <th></th>
+            <th>Host</th>
+            <th>IP</th>
+            <th>MAC</th>
+        </tr>
+        {% for host in hosts %}
+        <tr class="table_row">
+            <td>
+              <input type="radio" name="actions" value="ALLOW" />
+            </td>
+            <td>{{host.host}}</td>
+            <td>{{host.ip}}</td>
+            <td>{{host.mac}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <select name="dropdown">
+        <option value="Worker" selected>Worker</option>
+        <option value="Admin">Admin</option>
+        <option value="Server">Server</option>
+    </select>
     <input type="submit" value="Post">
   </form>
-  <h1>Configured Network Hosts</h1>
 
+  <br>
+  <a href="{{node_address}}/mine" target="_blank"><button class = "button">Validate new block</button></a>
+  <a href="/"><button class = "button">Resync</button></a>
+  <br>
+
+  <h1>Authorized Network Users</h1>
+  <table id="connection">
+      <tr class="table_row">
+          <th>Role</th>
+          <th>Host</th>
+          <th>IP</th>
+          <th>MAC</th>
+          <th>Port</th>
+      </tr>
 
 </body>
 

@@ -84,7 +84,11 @@ def runMinimalTopo():
 
     # Interesting
     # print("Dumping host connections")
-    # dumpNodeConnections(net.hosts)
+    # connections = dumpNodeConnections(net.hosts)
+    # print(type(connections))
+    # ping = net.pingAll();
+    # print((ping))
+
     # result = h1.cmd('ifconfig')
     # print(result)
     #Interesting wait for a command to finish executing, only UNIX commands
@@ -95,9 +99,13 @@ def runMinimalTopo():
 
     for h in hosts:
         #create JSON object of host: ip
-        ip = json.dumps({h.name: (h.IP(), h.MAC())})
-        #send host ip POST request
-        response = requests.post('http://0.0.0.0:5000/getip', json=ip,
+        ip = json.dumps({
+            "host": h.name,
+            "ip": h.IP(),
+            "mac": h.MAC()})
+
+        #send host POST request
+        response = requests.post('http://0.0.0.0:5000/getHost', json=ip,
         headers={'Content-type': 'application/json'})
         #Exit if request isn't properly executed
         if(response.status_code != 200 or response.text != "0"):
@@ -112,7 +120,7 @@ def runMinimalTopo():
 
 
     # Drop the user in to a CLI so user can run commands.
-    #CLI( net )
+    CLI( net )
 
     # After the user exits the CLI, shutdown the network.
     net.stop()

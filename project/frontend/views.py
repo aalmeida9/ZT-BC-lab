@@ -21,8 +21,8 @@ ruleList = []
 #hashes of acceptable rules (from BC)
 hashList = []
 
-#ips received from the network
-ipList = []
+#host configurations received from the network
+hostList = []
 #users are hosts that have been configured with the Blockchain
 #initally implement CA with just hashes then move onto public/private key
 userList = []
@@ -43,7 +43,7 @@ def index():
 def demo():
     get_rules()
     return render_template('demo.html',
-    ips = ipList, users = userList)
+    hosts = hostList, users = userList)
 
 # "Admin Page"
 @app.route("/admin")
@@ -58,16 +58,22 @@ def admin():
 def about():
     return render_template('about.html')
 
-# Get IP from hosts, potentially add a GET method for sending IPs to Ryu or BC
-@app.route("/getip", methods=['POST'])
-def getip():
-    # Need to process Dictionary, ip
-    ip = json.loads(request.json)
-    print(ip)
-    #for key, value in ip.items():
-    #    print key, value
+# "Topology Page"
+@app.route("/topo")
+@app.route("/topo.html")
+def topo():
+    return render_template('topo.html')
 
-    ipList.append(ip)
+# Get IP from hosts, potentially add a GET method for sending IPs to Ryu or BC
+@app.route("/getHost", methods=['POST'])
+def getHost():
+    # Need to process Dictionary, ip
+    host = json.loads(request.json)
+    print(host)
+
+    if host not in hostList:
+        hostList.append(host)
+
     return '0'
 
 
