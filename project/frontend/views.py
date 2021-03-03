@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 from hashlib import sha256
 
 from flask import Blueprint, render_template, redirect, request
@@ -62,7 +63,8 @@ def about():
 @app.route("/topo")
 @app.route("/topo.html")
 def topo():
-    return render_template('topo.html')
+    network_topology = os.path.join(os.path.join('static'), 'topology.png')
+    return render_template('topo.html', network_image = network_topology)
 
 # Get IP from hosts, potentially add a GET method for sending IPs to Ryu or BC
 @app.route("/getHost", methods=['POST'])
