@@ -51,6 +51,7 @@ class MinimalTopo( Topo ):
         # Create two hosts.
         h1 = self.addHost( 'h1', password = "test" )
         h2 = self.addHost( 'h2' )
+        h3 = self.addHost( 'h3' )
         # password is passed as an option to addHost not sure how to use it see more below
         # https://github.com/mininet/mininet/blob/master/mininet/topo.py
         # https://github.com/mininet/mininet/blob/715db45b9dcd9bcf0ffc9bb4211808217276e664/mininet/topo.py#L26
@@ -63,6 +64,7 @@ class MinimalTopo( Topo ):
         # Add links between the switch and each host
         self.addLink( s1, h1 )
         self.addLink( s1, h2 )
+        self.addLink( s1, h3 )
 
 
 def runMinimalTopo():
@@ -100,6 +102,7 @@ def runMinimalTopo():
     for h in hosts:
         #create JSON object of host: ip
         ip = json.dumps({
+            #"index": index(h),
             "host": h.name,
             "ip": h.IP(),
             "mac": h.MAC()})
@@ -120,7 +123,7 @@ def runMinimalTopo():
 
 
     # Drop the user in to a CLI so user can run commands.
-    CLI( net )
+    #CLI( net )
 
     # After the user exits the CLI, shutdown the network.
     net.stop()

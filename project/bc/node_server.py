@@ -18,7 +18,7 @@ class Block:
         self.index = index
         self.transactions = transactions
         #Need relevant attributes of host, start with MAC address
-        #consider public private key
+        #consider public private
         self.timestamp = timestamp
         self.previous_hash = previous_hash
         self.nonce = nonce
@@ -67,7 +67,8 @@ class Blockchain:
         ruleHash2 = sha256(ruleString2.encode()).hexdigest()
 
 
-        genesis_block = Block(0, [ruleHash1, ruleHash2], 0, "0")
+        # genesis_block = Block(0, [ruleHash1, ruleHash2], 0, "0")
+        genesis_block = Block(0, 0, 0, "0")
         genesis_block.hash = genesis_block.compute_hash()
         self.chain.append(genesis_block)
 

@@ -18,12 +18,44 @@
     </div>
 
     <h1>Network Certificates</h1>
-    <form class="" action="index.html" method="post">
-      Pass Phrase:
-      <input type="text" name="pass_phrase" placeholder="" />
-    </form>
+    <h2>Authorized Network Users</h2>
+    <form class="" action="" method="post">
+    <table id="connection">
+        <tr class="table_row">
+            <th>
 
-    <h1>Default Network Configuration</h1>
+            </th>
+            <th>Role</th>
+            <th>Host</th>
+            <th>IP</th>
+            <th>MAC</th>
+            <th>Port</th>
+        </tr>
+        {% for user in users %}
+        <tr class="table_row">
+            <td>
+                <input type="radio" name="hostNum" value={{users.index(user)}} />
+            </td>
+            <td>{{user.role}}</td>
+            <td>{{user.host}}</td>
+            <td>{{user.ip}}</td>
+            <td>{{user.mac}}</td>
+            <td>placeholder</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    Pass Phrase:
+    <input type="text" name="pass_phrase" placeholder="" />
+    <input type="submit" value="Post">
+
+    </form>
+    <br>
+    <a href="{{node_address}}/mine" target="_blank"><button class = "button">Validate new block</button></a>
+    <a href="/demo.html"><button class = "button">Resync</button></a>
+    <br>
+    <h1>User Private Keys</h1>
+
 
 </body>
 

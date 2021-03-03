@@ -51,7 +51,7 @@ def demo():
 @app.route("/admin.html")
 def admin():
     return render_template('admin.html',
-    node_address = BC_ADDRESS, ryu_address = RYU_ADDRESS, rules = ruleList)
+    users = userList)
 
 # "About Page"
 @app.route("/about")
@@ -79,8 +79,24 @@ def getHost():
     return '0'
 
 
-# create a route for an overview of the network (topology)
-# have a button link to the topology on the homepage
+@app.route("/addUser", methods=['POST'])
+def addUser():
+    host = int(request.form["hostNum"])
+    #print(type(hostList[host]))
+    #print(type(hostList[host]))
+    host = hostList[host]
+    user = {
+        'role': request.form["dropdown"],
+        'host': host["host"],
+        'ip': host["ip"],
+        'mac': host["mac"]
+    }
+
+    #if user not in userList:
+    userList.append(user)
+
+    print(user)
+    return redirect('/demo')
 
 #route for adding rules from the form to the BC/Controller
 @app.route("/add", methods=['POST'])

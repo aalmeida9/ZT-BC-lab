@@ -19,7 +19,7 @@
     <!-- <p>Create buttons for displaying net info with ofctl_rest, add a form to enter custom REST commands</p> -->
 
   <h1>Network Hosts</h1>
-  <form action="/add" id="textform" method="post">
+  <form action="/addUser" id="textform" method="post">
     <table id="connection">
         <tr class="table_row">
             <th></th>
@@ -30,7 +30,7 @@
         {% for host in hosts %}
         <tr class="table_row">
             <td>
-              <input type="radio" name="actions" value="ALLOW" />
+              <input type="radio" name="hostNum" value={{hosts.index(host)}} />
             </td>
             <td>{{host.host}}</td>
             <td>{{host.ip}}</td>
@@ -46,11 +46,6 @@
     <input type="submit" value="Post">
   </form>
 
-  <br>
-  <a href="{{node_address}}/mine" target="_blank"><button class = "button">Validate new block</button></a>
-  <a href="/"><button class = "button">Resync</button></a>
-  <br>
-
   <h1>Authorized Network Users</h1>
   <table id="connection">
       <tr class="table_row">
@@ -60,6 +55,16 @@
           <th>MAC</th>
           <th>Port</th>
       </tr>
+      {% for user in users %}
+      <tr class="table_row">
+          <td>{{user.role}}</td>
+          <td>{{user.host}}</td>
+          <td>{{user.ip}}</td>
+          <td>{{user.mac}}</td>
+          <td>placeholder</td>
+      </tr>
+      {% endfor %}
+  </table>
 
 </body>
 
