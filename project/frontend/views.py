@@ -66,6 +66,13 @@ def topo():
     network_topology = os.path.join(os.path.join('static'), 'topology.png')
     return render_template('topo.html', network_image = network_topology)
 
+
+# 'Net Start'
+@app.route("/netstart")
+def netstart():
+    command = 'sudo python net.py'
+    os.system("gnome-terminal -e 'bash -c \""+command+";bash\"'")
+
 # Get IP from hosts, potentially add a GET method for sending IPs to Ryu or BC
 @app.route("/getHost", methods=['POST'])
 def getHost():
