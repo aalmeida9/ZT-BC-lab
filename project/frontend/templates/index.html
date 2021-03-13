@@ -8,17 +8,26 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/card.css') }}" media="scren">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 </head>
-
 <body>
-
-    <div class="topnav">
-        <a class="active" href="index.html">Main Hub</a>
-        <a href="demo.html">Demo</a>
-        <a href="admin.html">Admin</a>
-        <a href="about.html">About the Project</a>
-    </div>
+	<div class="topnav">
+		<div class="dropdown">
+	    		<button class="dropbtn">Main Hub 
+	      		<i class="fa fa-caret-down"></i>
+	    		</button>
+	    		<div class="dropdown-content">
+	      		<a href="#" class="active">Startup</a>
+	      		<a href="topo.html">Topology</a>
+	      		<a href="demo.html">Network Hosts</a>
+			<a href="admin.html">Certificates</a>
+	    		</div>
+	  	</div>
+		<a href="demo.html">Demo</a>
+		<a href="admin.html">Admin</a>
+		<a href="about.html">About the Project</a>
+    	</div>
 
     <h2>Network</h2>
 
