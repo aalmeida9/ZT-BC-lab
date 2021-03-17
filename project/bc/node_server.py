@@ -1,8 +1,13 @@
-#Originally from: https://github.com/satwikkansal/python_blockchain_app/tree/ibm_blockchain_post
+#Originally from:
+#https://github.com/satwikkansal/python_blockchain_app/tree/ibm_blockchain_post
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import serialization
+
 from hashlib import sha256
+
 import json
 import time
-
 from flask import Flask, request
 import requests
 from bc import app
@@ -16,12 +21,17 @@ from bc import app
 class Block:
     def __init__(self, index, transactions, timestamp, previous_hash, nonce=0):
         self.index = index
+        # Transcations contains relevant user attributes
         self.transactions = transactions
-        #Need relevant attributes of host, start with MAC address
-        #consider public private
+        # Consider using timestamp for certificate revocation
         self.timestamp = timestamp
         self.previous_hash = previous_hash
         self.nonce = nonce
+        self.generate_keys()
+        # Test for getter methods
+        #print(self.get_public_key)
+        #print(self.get_private_key)
+
 
     def compute_hash(self):
         """
@@ -30,6 +40,59 @@ class Block:
         block_string = json.dumps(self.__dict__, sort_keys=True)
         return sha256(block_string.encode()).hexdigest()
 
+    def generate_keys(self):
+        # generate public and private key pair, from:
+        # https://nitratine.net/blog/post/asymmetric-encryption-and-decryption-in-python/
+        private_key = rsa.generate_private_key(
+            public_exponent=65537,
+            key_size=2048,
+            backend=default_backend()
+        )
+        public_key = private_key.public_key()
+        # Set public key for each block as an attribute,
+        # doesn't work due to json.dumps in compute_hash so just used get method
+
+        # Store public and private keys for each block, to be accessed later
+        pem = public_key.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        )
+        with open('bc/keys/public_key_{}.pem'.format(self.index), 'wb') as f:
+                f.write(pem)
+
+        pem = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption()
+        )
+        # Consider using password protection:
+        # https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa.html#key-serialization
+        # use index in filename
+        with open('bc/keys/private_key_{}.pem'.format(self.index), 'wb') as f:
+            f.write(pem)
+
+    def get_public_key(self):
+        """
+        A function to retrieve the private key from a file.
+        """
+        with open("public_key_{}.pem".format(self.index), "rb") as key_file:
+            public_key = serialization.load_pem_public_key(
+                key_file.read(),
+                backend=default_backend()
+            )
+        return public_key
+
+    def get_private_key(self):
+        """
+        A function to retrieve the private key from a file.
+        """
+        with open("private_key_{}.pem".format(self.index), "rb") as key_file:
+            private_key = serialization.load_pem_private_key(
+                key_file.read(),
+                password=None,
+                backend=default_backend()
+            )
+        return private_key
 
 class Blockchain:
     # difficulty of our PoW algorithm
@@ -45,7 +108,7 @@ class Blockchain:
         the chain. The block has index 0, previous_hash as 0, and
         a valid hash.
         """
-        #example data for demonstrating Blockchain for authenticaiton
+        # OLD, example data for demonstrating Blockchain for authenticaiton
         exampleRule1 = {
             "nw_src": "10.0.0.1",
             "nw_dst": "10.0.0.2",
@@ -186,7 +249,9 @@ def test():
 @app.route('/new_transaction', methods=['POST'])
 def new_transaction():
     tx_data = request.get_json()
-    required_fields = ["nw_src", "nw_dst", "nw_proto", "actions"]
+    #Old Implementation with firewall rules
+    #required_fields = ["nw_src", "nw_dst", "nw_proto", "actions"]
+    required_fields = ["role", "host", "ip", "mac"]
 
     for field in required_fields:
         if not tx_data.get(field):
@@ -359,6 +424,14 @@ def announce_new_block(block):
         requests.post(url,
                       data=json.dumps(block.__dict__, sort_keys=True),
                       headers=headers)
+
+def generate_key(block):
+    key = Fernet.generate_key()
+    with open("secreet.key", "wb") as key_file:
+        key_file.write(key)
+
+def load_key():
+    return open("secret.key", "rb").read()
 
 # Uncomment this line if you want to specify the port number in the code
 #app.run(debug=True, port=8000)
