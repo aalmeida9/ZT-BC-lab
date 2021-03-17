@@ -2,60 +2,60 @@
 <html lang="en" dir="ltr">
 
 <head>
-    <title>Admin Page</title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}" media="screen">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
+  <title>Admin Page</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}" media="screen">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
 </head>
 
 <body>
-    <div class="topnav">
-        <a href="index.html">Main Hub</a>
-        <a href="demo.html">Demo</a>
-        <a class="active" href="admin.html">Admin</a>
-        <a href="about.html">About the Project</a>
-    </div>
-    <h1>Add a Rule</h1>
-    <form action="/add" id="textform" method="post">
-        Source IP:
-        <input type="text" name="src" placeholder="10.0.0.x">
-        <br />
-        Destination IP:
-        <input type="text" name="dst" placeholder="10.0.0.x">
-        <br />
-        <input type="radio" name="actions" value="ALLOW" checked> Allow
-        <input type="radio" name="actions" value="DENY"> Deny
-        <select name="dropdown">
-            <option value="ICMP" selected>ICMP</option>
-            <option value="ICMPv6">ICMPv6</option>
-            <option value="TCP">TCP</option>
-            <option value="UDP">UDP</option>
-        </select>
-        <input type="submit" value="Post">
-    </form>
+  <div class="topnav">
+    <a href="index.html">Main Hub</a>
+    <a href="demo.html">Demo</a>
+    <a class="active" href="admin.html">Admin</a>
+    <a href="about.html">About the Project</a>
+  </div>
+  <h1>Add a Rule</h1>
+  <form action="/add" id="textform" method="post">
+    Source IP:
+    <input type="text" name="src" placeholder="10.0.0.x">
     <br />
+    Destination IP:
+    <input type="text" name="dst" placeholder="10.0.0.x">
+    <br />
+    <input type="radio" name="actions" value="ALLOW" checked> Allow
+    <input type="radio" name="actions" value="DENY"> Deny
+    <select name="dropdown">
+      <option value="ICMP" selected>ICMP</option>
+      <option value="ICMPv6">ICMPv6</option>
+      <option value="TCP">TCP</option>
+      <option value="UDP">UDP</option>
+    </select>
+    <input type="submit" value="Post">
+  </form>
+  <br />
 
-    <a href="{{node_address}}/mine" target="_blank"><button class = "button">Validate new block</button></a>
-    <a href="/"><button class = "button">Resync</button></a>
+  <a href="{{node_address}}/mine" target="_blank"><button class="button">Validate new block</button></a>
+  <a href="/"><button class="button">Resync</button></a>
 
-    <h2>Current Rules</h2>
-    <table id="connection">
-        <tr class="table_row">
-            <th>IP Source</th>
-            <th>IP Destination</th>
-            <th>Protocol Type</th>
-            <th>Action</th>
-        </tr>
-        {% for rule in rules %}
-        <tr class="table_row">
-            <td>{{rule.nw_src}}</td>
-            <td>{{rule.nw_dst}}</td>
-            <td>{{rule.nw_proto}}</td>
-            <td>{{rule.actions}}</td>
-        </tr>
-        {% endfor %}
-    </table>
+  <h2>Current Rules</h2>
+  <table id="connection">
+    <tr class="table_row">
+      <th>IP Source</th>
+      <th>IP Destination</th>
+      <th>Protocol Type</th>
+      <th>Action</th>
+    </tr>
+    {% for rule in rules %}
+    <tr class="table_row">
+      <td>{{rule.nw_src}}</td>
+      <td>{{rule.nw_dst}}</td>
+      <td>{{rule.nw_proto}}</td>
+      <td>{{rule.actions}}</td>
+    </tr>
+    {% endfor %}
+  </table>
 </body>
 
 </html>

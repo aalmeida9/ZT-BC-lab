@@ -1,160 +1,112 @@
-# Python file for Single Sign On (SSO) to be used by Ryu
+# rest api not currently working 
+import json
 
-# OpenFlow Protocol
-# https://osrg.github.io/ryu-book/en/html/openflow_protocol.html
-# https://osrg.github.io/ryu-book/en/html/switch_test_tool.html
-
-# Notes for Ryu:
-# https://inside-openflow.com/2016/07/21/ryu-api-dissecting-simple-switch/
-# https://inside-openflow.com/2016/08/05/ryu-api-reimagining-simple-switch/
-
-# WSGI/REST
-# https://osrg.github.io/ryu-book/en/html/rest_api.html
-# https://ryu.readthedocs.io/en/latest/app/ofctl_rest.html
-# https://readthedocs.org/projects/ryu-hisaharu/downloads/pdf/ofctl_rest-add_some_messages/
-
-# Imports
 from ryu.app import simple_switch_13
-from ryu.base import app_manager
+#from webob import Response
 from ryu.controller import ofp_event
-from ryu.controller.handler import CONFIG_DISPATCHER, MAIN_DISPATCHER
+from ryu.controller.handler import CONFIG_DISPATCHER
 from ryu.controller.handler import set_ev_cls
-from ryu.ofproto import ofproto_v1_3
-from ryu.lib.packet import packet
-from ryu.lib.packet import ethernet
-from ryu.lib.packet import ether_types
+from ryu.app.wsgi import ControllerBase, Response, WSGIApplication, route
+from ryu.lib import dpid as dpid_lib
 
-#import rest api
-import ryu.app.ofctl.api
-#used for printing raw packet data
-import array as arr
+simple_switch_instance_name = 'simple_switch_api_app'
+url = '/simpleswitch/mactable/{dpid}'
 
+# extension of SimpleSwitch13 Ryu component, from app_manager.RyuApp
+class SimpleSwitchRest13(simple_switch_13.SimpleSwitch13):
 
-# currently a copy of the SimpleSwitch13.py Ryu app
-# build on this with additional methods
-class SSO(app_manager.RyuApp):
-    OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
+    # dpset.DPset?
+    _CONTEXTS = {'wsgi': WSGIApplication}
 
     def __init__(self, *args, **kwargs):
-        super(SSO, self).__init__(*args, **kwargs)
-        self.mac_to_port = {}
-        # Need to hash passwords at some point to ensure confidentiality
-        # Table for passwords to MAC addresses
-        # self.pass_to_port = {}
+        super(SimpleSwitchRest13, self).__init__(*args, **kwargs)
+        self.switches = {}
+        wsgi = kwargs['wsgi']
+        # Registers the Controler class for WSGI
+        wsgi.register(SimpleSwitchController,
+                      {simple_switch_instance_name: self})
 
-    # OpenFlow Event for when a switch is added to the controller
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
+        super(SimpleSwitchRest13, self).switch_features_handler(ev)
         datapath = ev.msg.datapath
-        ofproto = datapath.ofproto
-        parser = datapath.ofproto_parser
+        self.switches[datapath.id] = datapath
+        self.mac_to_port.setdefault(datapath.id, {})
 
-        # install table-miss flow entry
-        #
-        # We specify NO BUFFER to max_len of the output action due to
-        # OVS bug. At this moment, if we specify a lesser number, e.g.,
-        # 128, OVS will send Packet-In with invalid buffer_id and
-        # truncated packet data. In that case, we cannot output packets
-        # correctly.  The bug has been fixed in OVS v2.1.0.
-        match = parser.OFPMatch()
-        actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER,
-                                          ofproto.OFPCML_NO_BUFFER)]
-        self.add_flow(datapath, 0, match, actions)
+    def set_mac_to_port(self, dpid, entry):
+        mac_table = self.mac_to_port.setdefault(dpid, {})
+        datapath = self.switches.get(dpid)
 
-    # helper method for above event
-    def add_flow(self, datapath, priority, match, actions, buffer_id=None):
-        ofproto = datapath.ofproto
-        parser = datapath.ofproto_parser
+        entry_port = entry['port']
+        entry_mac = entry['mac']
 
-        inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,
-                                             actions)]
-        if buffer_id:
-            mod = parser.OFPFlowMod(datapath=datapath, buffer_id=buffer_id,
-                                    priority=priority, match=match,
-                                    instructions=inst)
-        else:
-            mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
-                                    match=match, instructions=inst)
-        datapath.send_msg(mod)
+        if datapath is not None:
+            parser = datapath.ofproto_parser
+            if entry_port not in mac_table.values():
 
-    # Event for when switch sends controller a packet for unknown destination
-    @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
-    def _packet_in_handler(self, ev):
-        # If you hit this you might want to increase
-        # the "miss_send_length" of your switch
-        if ev.msg.msg_len < ev.msg.total_len:
-            self.logger.debug("packet truncated: only %s of %s bytes",
-                              ev.msg.msg_len, ev.msg.total_len)
-        msg = ev.msg
-        datapath = msg.datapath
-        ofproto = datapath.ofproto
-        parser = datapath.ofproto_parser
-        in_port = msg.match['in_port']
+                for mac, port in mac_table.items():
 
-        # from ryu/doc/library_packet.rst, prints raw packet data
-        # pkt = packet.Packet(arr.array('B', ev.msg.data))
-        # for p in pkt.protocols:
-        #     print(p)
-        #     print(type(p))
-            # print p.protocol_name, p
-            # if p.protocol_name == 'vlan':
-            #     print 'vid = ', p.vid
-        # see library_packet.rst for building a packet as well
+                    # from known device to new device
+                    actions = [parser.OFPActionOutput(entry_port)]
+                    match = parser.OFPMatch(in_port=port, eth_dst=entry_mac)
+                    self.add_flow(datapath, 1, match, actions)
+                    #add_flow method from parent Simple Switch class
 
-        pkt = packet.Packet(msg.data)
-        eth = pkt.get_protocols(ethernet.ethernet)[0]
+                    # from new device to known device
+                    actions = [parser.OFPActionOutput(port)]
+                    match = parser.OFPMatch(in_port=entry_port, eth_dst=mac)
+                    self.add_flow(datapath, 1, match, actions)
 
-        if eth.ethertype == ether_types.ETH_TYPE_LLDP:
-            # ignore lldp packet
-            return
-        dst = eth.dst
-        src = eth.src
+                mac_table.update({entry_mac: entry_port})
+        return mac_table
 
-        #print("Packet Source: {} Destination: {}".format(src, dst))
+# Defines the URL to receive the HTTP request and its method
+class SimpleSwitchController(ControllerBase):
 
-        #configure MAC-to-Port table
-        dpid = datapath.id
-        self.mac_to_port.setdefault(dpid, {})
+    def __init__(self, req, link, data, **config):
+        super(SimpleSwitchController, self).__init__(req, link, data, **config)
+        self.simple_switch_app = data[simple_switch_instance_name]
 
-        #src dest are mac addresses
-        self.logger.info("packet in %s %s %s %s", dpid, src, dst, in_port)
+    @route('simpleswitch', url, methods=['GET'],
+           requirements={'dpid': dpid_lib.DPID_PATTERN})
+    def list_mac_table(self, req, **kwargs):
 
-        # learn a mac address to avoid FLOOD next time.
-        self.mac_to_port[dpid][src] = in_port
+        simple_switch = self.simple_switch_app
+        dpid = dpid_lib.str_to_dpid(kwargs['dpid'])
 
-        # Mac-to-Port lookup
-        if dst in self.mac_to_port[dpid]:
-            out_port = self.mac_to_port[dpid][dst]
-        else:
-            out_port = ofproto.OFPP_FLOOD
+        if dpid not in simple_switch.mac_to_port:
+            return Response(status=404)
 
-        actions = [parser.OFPActionOutput(out_port)]
+        mac_table = simple_switch.mac_to_port.get(dpid, {})
 
-        #Adding a Flow Entry for a Learned Destination
-        # install a flow to avoid packet_in next time
-        if out_port != ofproto.OFPP_FLOOD:
-            match = parser.OFPMatch(in_port=in_port, eth_dst=dst)
-            # verify if we have a valid buffer_id, if yes avoid to send both
-            # flow_mod & packet_out
-            if msg.buffer_id != ofproto.OFP_NO_BUFFER:
-                self.add_flow(datapath, 1, match, actions, msg.buffer_id)
-                return
-            else:
-                self.add_flow(datapath, 1, match, actions)
+        body = json.dumps(mac_table)
+        return Response(content_type='application/json', body=body)
 
-        #Forwarding the Packet Sent to the Controller
-        data = None
-        if msg.buffer_id == ofproto.OFP_NO_BUFFER:
-            data = msg.data
+    @route('simpleswitch', url, methods=['PUT'],
+           requirements={'dpid': dpid_lib.DPID_PATTERN})
+    def put_mac_table(self, req, **kwargs):
 
-        out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
-                                  in_port=in_port, actions=actions, data=data)
-        datapath.send_msg(out)
+        simple_switch = self.simple_switch_app
+        dpid = dpid_lib.str_to_dpid(kwargs['dpid'])
+        try:
+            new_entry = req.json if req.body else {}
+        except ValueError:
+            raise Response(status=400)
 
-    # SSO
+        if dpid not in simple_switch.mac_to_port:
+            return Response(status=404)
 
-    # Identity Access & Managment (IAM)
+        try:
+            mac_table = simple_switch.set_mac_to_port(dpid, new_entry)
+            body = json.dumps(mac_table)
+            return Response(content_type='application/json', body=body)
+        except Exception as e:
+            return Response(status=500)
 
-    # Link SSO to frontend, reference ws_topology.py
-
-    # Create Logs, reference SimpleMonitor13
+    # Method for handling user roles
+    # url?
+    @route('simpleswitch', url, methods=['PUT'],
+            requirements={'dpid': dpid_lib.DPID_PATTERN})
+    def put_user_table(self, req, **kwargs):
+        simple_switch = self.simple_switch_app
+        dpid = dpid_lib.str_to_dpid(kwargs['dpid'])

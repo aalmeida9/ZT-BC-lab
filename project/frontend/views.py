@@ -68,10 +68,11 @@ def topo():
 
 
 # 'Net Start'
-@app.route("/netstart")
-def netstart():
-    command = 'sudo python net.py'
+@app.route("/netstart/<topo>")
+def netstart(topo):
+    command = 'sudo python net{}.py'.format(topo)
     os.system("gnome-terminal -e 'bash -c \""+command+";bash\"'")
+    return redirect('/topo')
 
 # Get IP from hosts, potentially add a GET method for sending IPs to Ryu or BC
 @app.route("/getHost", methods=['POST'])
@@ -96,11 +97,14 @@ def addUser():
         'role': request.form["dropdown"],
         'host': host["host"],
         'ip': host["ip"],
-        'mac': host["mac"]
+        'mac': host["mac"],
+        'in': ''
     }
 
-    #if user not in userList:
-    userList.append(user)
+    # Need to check if another host is in user list with different role
+    # delete different role of same host
+    if user not in userList:
+        userList.append(user)
 
     print(user)
     return redirect('/demo')

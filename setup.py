@@ -7,7 +7,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'flask', 'requests', 'pytest'
+        'flask', 'requests', 'pytest', 'cryptography'
     ]
 )
 #Flask~=1.1 and requests~=2.22

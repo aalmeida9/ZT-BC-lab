@@ -2,27 +2,75 @@
 <html lang="en" dir="ltr">
 
 <head>
-    <title>Main Hub</title>
-    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+  <title>Main Hub</title>
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/card.css') }}" media="scren">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/card.css') }}">
 
 </head>
 
 <body>
 
-    <div class="topnav">
-        <a class="active" href="index.html">Main Hub</a>
-        <a href="demo.html">Demo</a>
-        <a href="admin.html">Admin</a>
-        <a href="about.html">About the Project</a>
+  <div class="topnav">
+    <a class="active" href="index.html">Main Hub</a>
+    <a href="demo.html">Demo</a>
+    <a href="admin.html">Admin</a>
+    <a href="about.html">About the Project</a>
+  </div>
+
+  <h1>Topology Options</h1>
+  <div class="row">
+    <div class="column">
+      <div class="card">
+        <img src="{{ network_image }}" alt="" style="width:100%">
+        <div class="container">
+          <h4><b>Network 1</b></h4>
+          <p>Network 1 contains 3 hosts connected to one switch</p>
+          <a href="netstart/1"><button type="button" class="button">Startup</button></a>
+        </div>
+      </div>
     </div>
 
-    <h1>View of Network Topology</h1>
+    <div class="column">
+      <div class="card">
+        <img src="img_avatar.png" alt="" style="width:100%">
+        <div class="container">
+          <h4><b>Network 2</b></h4>
+          <p></p><br>
+          <a href="topo.html"><button type="button" class="button">Startup</button></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="column">
+      <div class="card">
+        <img src="img_avatar.png" alt="" style="width:100%">
+        <div class="container">
+          <h4><b>Network 3</b></h4>
+          <p></p><br>
+          <a href="demo.html"><button type="button" class="button">Startup</button></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="column">
+      <div class="card">
+        <img src="img_avatar.png" alt="" style="width:100%">
+        <div class="container">
+          <h4><b>Network 4</b></h4>
+          <p></p>
+          <a href="admin.html"><button type="button" class="button">Startup</button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--
 	<iframe src="{{ network_image }}" width="100%" height="500px" align="center">
 	</iframe>
+  <img src="{{ network_image }}" /> !-->
 </body>
 
 </html>

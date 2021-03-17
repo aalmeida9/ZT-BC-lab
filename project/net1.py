@@ -123,7 +123,7 @@ def runMinimalTopo():
 
 
     # Drop the user in to a CLI so user can run commands.
-    #CLI( net )
+    CLI( net )
 
     # After the user exits the CLI, shutdown the network.
     net.stop()

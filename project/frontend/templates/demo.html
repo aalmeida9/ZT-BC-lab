@@ -2,68 +2,68 @@
 <html lang="en" dir="ltr">
 
 <head>
-    <title>Demo Page</title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}" media="screen">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
+  <title>Demo Page</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}" media="screen">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
 </head>
 
 <body>
-    <div class="topnav">
-        <a href="index.html">Main Hub</a>
-        <a class="active" href="demo.html">Demo</a>
-        <a href="admin.html">Admin</a>
-        <a href="about.html">About the Project</a>
-    </div>
-    <!-- <p>Create buttons for displaying net info with ofctl_rest, add a form to enter custom REST commands</p> -->
+  <div class="topnav">
+    <a href="index.html">Main Hub</a>
+    <a class="active" href="demo.html">Demo</a>
+    <a href="admin.html">Admin</a>
+    <a href="about.html">About the Project</a>
+  </div>
+  <!-- <p>Create buttons for displaying net info with ofctl_rest, add a form to enter custom REST commands</p> -->
 
   <h1>Network Hosts</h1>
   <form action="/addUser" id="textform" method="post">
     <table id="connection">
-        <tr class="table_row">
-            <th></th>
-            <th>Host</th>
-            <th>IP</th>
-            <th>MAC</th>
-        </tr>
-        {% for host in hosts %}
-        <tr class="table_row">
-            <td>
-              <input type="radio" name="hostNum" value={{hosts.index(host)}} />
-            </td>
-            <td>{{host.host}}</td>
-            <td>{{host.ip}}</td>
-            <td>{{host.mac}}</td>
-        </tr>
-        {% endfor %}
+      <tr class="table_row">
+        <th></th>
+        <th>Host</th>
+        <th>IP</th>
+        <th>MAC</th>
+      </tr>
+      {% for host in hosts %}
+      <tr class="table_row">
+        <td>
+          <input type="radio" name="hostNum" value={{hosts.index(host)}} />
+        </td>
+        <td>{{host.host}}</td>
+        <td>{{host.ip}}</td>
+        <td>{{host.mac}}</td>
+      </tr>
+      {% endfor %}
     </table>
     <select name="dropdown">
-        <option value="Worker" selected>Worker</option>
-        <option value="Admin">Admin</option>
-        <option value="Server">Server</option>
+      <option value="Worker" selected>Worker</option>
+      <option value="Admin">Admin</option>
+      <option value="Server">Server</option>
     </select>
     <input type="submit" value="Post">
   </form>
 
   <h1>Authorized Network Users</h1>
   <table id="connection">
-      <tr class="table_row">
-          <th>Role</th>
-          <th>Host</th>
-          <th>IP</th>
-          <th>MAC</th>
-          <th>Port</th>
-      </tr>
-      {% for user in users %}
-      <tr class="table_row">
-          <td>{{user.role}}</td>
-          <td>{{user.host}}</td>
-          <td>{{user.ip}}</td>
-          <td>{{user.mac}}</td>
-          <td>placeholder</td>
-      </tr>
-      {% endfor %}
+    <tr class="table_row">
+      <th>Role</th>
+      <th>Host</th>
+      <th>IP</th>
+      <th>MAC</th>
+      <th>Port</th>
+    </tr>
+    {% for user in users %}
+    <tr class="table_row">
+      <td>{{user.role}}</td>
+      <td>{{user.host}}</td>
+      <td>{{user.ip}}</td>
+      <td>{{user.mac}}</td>
+      <td>{{user.in}}</td>
+    </tr>
+    {% endfor %}
   </table>
 
 </body>

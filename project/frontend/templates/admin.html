@@ -2,59 +2,59 @@
 <html lang="en" dir="ltr">
 
 <head>
-    <title>Admin Page</title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}" media="screen">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
+  <title>Admin Page</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}" media="screen">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
 </head>
 
 <body>
-    <div class="topnav">
-        <a href="index.html">Main Hub</a>
-        <a href="demo.html">Demo</a>
-        <a class="active" href="admin.html">Admin</a>
-        <a href="about.html">About the Project</a>
-    </div>
+  <div class="topnav">
+    <a href="index.html">Main Hub</a>
+    <a href="demo.html">Demo</a>
+    <a class="active" href="admin.html">Admin</a>
+    <a href="about.html">About the Project</a>
+  </div>
 
-    <h1>Network Certificates</h1>
-    <h2>Authorized Network Users</h2>
-    <form class="" action="" method="post">
+  <h1>Network Certificates</h1>
+  <h2>Authorized Network Users</h2>
+  <form class="" action="" method="post">
     <table id="connection">
-        <tr class="table_row">
-            <th>
+      <tr class="table_row">
+        <th>
 
-            </th>
-            <th>Role</th>
-            <th>Host</th>
-            <th>IP</th>
-            <th>MAC</th>
-            <th>Port</th>
-        </tr>
-        {% for user in users %}
-        <tr class="table_row">
-            <td>
-                <input type="radio" name="hostNum" value={{users.index(user)}} />
-            </td>
-            <td>{{user.role}}</td>
-            <td>{{user.host}}</td>
-            <td>{{user.ip}}</td>
-            <td>{{user.mac}}</td>
-            <td>placeholder</td>
-        </tr>
-        {% endfor %}
+        </th>
+        <th>Role</th>
+        <th>Host</th>
+        <th>IP</th>
+        <th>MAC</th>
+        <th>Port</th>
+      </tr>
+      {% for user in users %}
+      <tr class="table_row">
+        <td>
+          <input type="radio" name="hostNum" value={{users.index(user)}} />
+        </td>
+        <td>{{user.role}}</td>
+        <td>{{user.host}}</td>
+        <td>{{user.ip}}</td>
+        <td>{{user.mac}}</td>
+        <td>placeholder</td>
+      </tr>
+      {% endfor %}
     </table>
     <br>
     Pass Phrase:
     <input type="text" name="pass_phrase" placeholder="" />
     <input type="submit" value="Post">
 
-    </form>
-    <br>
-    <a href="{{node_address}}/mine" target="_blank"><button class = "button">Validate new block</button></a>
-    <a href="/demo.html"><button class = "button">Resync</button></a>
-    <br>
-    <h1>User Private Keys</h1>
+  </form>
+  <br>
+  <a href="{{node_address}}/mine" target="_blank"><button class="button">Validate new block</button></a>
+  <a href="/demo.html"><button class="button">Resync</button></a>
+  <br>
+  <h1>User Private Keys</h1>
 
 
 </body>

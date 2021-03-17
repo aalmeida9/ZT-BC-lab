@@ -2,82 +2,81 @@
 <html lang="en" dir="ltr">
 
 <head>
-    <title>Main Hub</title>
-    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/card.css') }}" media="scren">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <title>Main Hub</title>
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/card.css') }}">
 
 </head>
+
 <body>
-	<div class="topnav">
-		<div class="dropdown">
-	    		<button class="dropbtn">Main Hub 
-	      		<i class="fa fa-caret-down"></i>
-	    		</button>
-	    		<div class="dropdown-content">
-	      		<a href="#" class="active">Startup</a>
-	      		<a href="topo.html">Topology</a>
-	      		<a href="demo.html">Network Hosts</a>
-			<a href="admin.html">Certificates</a>
-	    		</div>
-	  	</div>
-		<a href="demo.html">Demo</a>
-		<a href="admin.html">Admin</a>
-		<a href="about.html">About the Project</a>
-    	</div>
+  <div class="topnav">
+    <div class="dropdown">
+      <button class="dropbtn">Main Hub
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content">
+        <a href="#" class="active">Startup</a>
+        <a href="topo.html">Topology</a>
+        <a href="demo.html">Network Hosts</a>
+        <a href="admin.html">Certificates</a>
+      </div>
+    </div>
+    <a href="demo.html">Demo</a>
+    <a href="admin.html">Admin</a>
+    <a href="about.html">About the Project</a>
+  </div>
 
-    <h2>Network</h2>
+  <h2>Network</h2>
 
-    <div class="row">
-        <div class="column">
-            <div class="card">
-                <img src="network1.png" alt="" style="width:100%">
-                <div class="container">
-                    <h4><b>Network Startup</b></h4>
-                    <p>Start the Mininet emulation, Ryu controller, and example Blockchain with one click.</p>
-                    <a href="index.html"><button type="button" class="button">Startup</button></a>
-                </div>
-            </div>
+  <div class="row">
+    <div class="column">
+      <div class="card">
+        <img src="network1.png" alt="" style="width:100%">
+        <div class="container">
+          <h4><b>Network Startup</b></h4>
+          <p>Start the Mininet emulation, Ryu controller, and example Blockchain with one click.</p>
+          <a href="topo.html"><button type="button" class="button">Startup</button></a>
         </div>
-
-        <div class="column">
-            <div class="card">
-                <img src="img_avatar.png" alt="" style="width:100%">
-                <div class="container">
-                    <h4><b>Topology</b></h4>
-                    <p>Change and view the current emulated network topology.</p><br>
-                    <a href="topo.html"><button type="button" class="button">Topology</button></a>
-                </div>
-            </div>
-        </div>
-
-        <div class="column">
-            <div class="card">
-                <img src="img_avatar.png" alt="" style="width:100%">
-                <div class="container">
-                    <h4><b>View Network Description</b></h4>
-                    <p>View specific details regarding configuration of the network hosts.</p><br>
-                    <a href="demo.html"><button type="button" class="button">Network Hosts</button></a>
-                </div>
-            </div>
-        </div>
-
-        <div class="column">
-            <div class="card">
-                <img src="img_avatar.png" alt="" style="width:100%">
-                <div class="container">
-                    <h4><b>Network Certificates</b></h4>
-                    <p>Allows the demonstrator to handle digital certificates used by the Network</p>
-                    <a href="admin.html"><button type="button" class="button">Certificates</button></a>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
 
-    <!-- <h2>Readme</h2> -->
+    <div class="column">
+      <div class="card">
+        <img src="img_avatar.png" alt="" style="width:100%">
+        <div class="container">
+          <h4><b>Placeholder</b></h4>
+          <p>Not clear what to put here yet</p><br>
+          <a href="topo.html"><button type="button" class="button">Topology</button></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="column">
+      <div class="card">
+        <img src="img_avatar.png" alt="" style="width:100%">
+        <div class="container">
+          <h4><b>View Network Description</b></h4>
+          <p>View specific details regarding configuration of the network hosts.</p><br>
+          <a href="demo.html"><button type="button" class="button">Network Hosts</button></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="column">
+      <div class="card">
+        <img src="img_avatar.png" alt="" style="width:100%">
+        <div class="container">
+          <h4><b>Network Certificates</b></h4>
+          <p>Allows the demonstrator to handle digital certificates used by the Network</p>
+          <a href="admin.html"><button type="button" class="button">Certificates</button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <h2>Readme</h2> -->
 
 </body>
 
