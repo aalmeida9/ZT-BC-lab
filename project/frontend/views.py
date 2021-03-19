@@ -74,6 +74,22 @@ def netstart(topo):
     os.system("gnome-terminal -e 'bash -c \""+command+";bash\"'")
     return redirect('/topo')
 
+# 'Ryu Start'
+@app.route("/ryustart/<topo>")
+def ryustart(topo):
+    #cdCommand = 'cd ..'
+    ryuCommand = 'ryu-manager ryu.app.rest_firewall'.format(topo)
+    os.system("gnome-terminal -e 'bash -c \""+ryuCommand+";bash\"'")
+    return redirect('/topo')
+
+# 'BC Start'
+@app.route("/bcstart/<topo>")
+def bcstart(topo):
+    #cdCommand = 'cd ..'
+    bcCommand = 'sudo python runBC.py'.format(topo)
+    os.system("gnome-terminal -e 'bash -c \""+bcCommand+";bash\"'")
+    return redirect('/topo')
+
 # Get IP from hosts, potentially add a GET method for sending IPs to Ryu or BC
 @app.route("/getHost", methods=['POST'])
 def getHost():
