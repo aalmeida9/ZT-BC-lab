@@ -2,7 +2,12 @@
 #https://github.com/satwikkansal/python_blockchain_app/tree/ibm_blockchain_post
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import serialization, hashes
+from cryptography import x509
+from cryptography.x509.oid import NameOID
+
+import datetime
+import uuid
 
 from hashlib import sha256
 
@@ -109,6 +114,7 @@ class Blockchain:
         a valid hash.
         """
         # OLD, example data for demonstrating Blockchain for authenticaiton
+        # Remove in the future, could be useful reference for firewall
         exampleRule1 = {
             "nw_src": "10.0.0.1",
             "nw_dst": "10.0.0.2",
@@ -133,7 +139,53 @@ class Blockchain:
         # genesis_block = Block(0, [ruleHash1, ruleHash2], 0, "0")
         genesis_block = Block(0, 0, 0, "0")
         genesis_block.hash = genesis_block.compute_hash()
+        # Generate a root certificate for the blockchain
+        self.add_cert(genesis_block)
+        #append genesis block
         self.chain.append(genesis_block)
+
+    def add_cert(self, block):
+        """
+        A function that adds a certificate to a block
+        """
+        # private_key = block.get_private_key
+        # public_key = block.get_public_key
+        private_key = rsa.generate_private_key(
+            public_exponent=65537,
+            key_size=2048,
+            backend=default_backend()
+        )
+        public_key = private_key.public_key()
+
+        builder = x509.CertificateBuilder()
+
+        builder = builder.subject_name(x509.Name([
+            x509.NameAttribute(NameOID.COMMON_NAME, u'BC Test CA'),
+            x509.NameAttribute(NameOID.ORGANIZATION_NAME, u'BC'),
+            x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, u'Test')
+        ]))
+
+        builder = builder.issuer_name(x509.Name([
+            x509.NameAttribute(NameOID.COMMON_NAME, u'BC Test CA')
+        ]))
+        # Time validity
+        builder = builder.not_valid_before(datetime.datetime.now())
+        builder = builder.not_valid_after(datetime.datetime.now() + datetime.timedelta(days=365))
+
+        builder = builder.serial_number(int(uuid.uuid4()))
+        builder = builder.public_key(public_key)
+        builder = builder.add_extension(
+            x509.BasicConstraints(ca=True, path_length=None), critical=True,
+        )
+
+        certificate = builder.sign(
+            private_key = private_key,
+            algorithm = hashes.SHA256(),
+            backend=default_backend()
+        )
+
+        print(isinstance(certificate, x509.Certificate))
+
 
     @property
     def last_block(self):
