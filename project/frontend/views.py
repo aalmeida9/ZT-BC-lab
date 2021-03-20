@@ -38,6 +38,15 @@ userList = []
 def index():
     return render_template('index.html')
 
+# Test page for reformatting frontend components see resources below
+# https://jinja.palletsprojects.com/en/2.11.x/templates/
+# https://stackoverflow.com/questions/18600031/changing-the-active-class-of-a-link-with-the-twitter-bootstrap-css-in-python-fla
+# https://jinja.palletsprojects.com/en/2.11.x/tricks/
+# https://stackoverflow.com/questions/9404990/how-to-pass-selected-named-arguments-to-jinja2s-include-context
+@app.route("/test.html")
+def testPage():
+    return render_template('test.html', test1= "Test")
+
 # "Firewall Page"
 @app.route("/firewall")
 @app.route("/firewall.html")

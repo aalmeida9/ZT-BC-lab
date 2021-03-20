@@ -1,0 +1,13 @@
+{% extends "base.html" -%}
+{% block navbar -%}
+  {% with test=test1 %}
+    {% include 'navbar.html' %}
+  {% endwith %}
+{%- endblock navbar %}
+
+{% block content -%}
+  {{test1}}
+  {% with test=test1 %}
+    {% include 'test1.html' %}
+  {% endwith %}
+{%- endblock content %}
