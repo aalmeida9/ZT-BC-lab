@@ -16,8 +16,8 @@
     <a class="active" href="admin.html">Admin</a>
     <a href="about.html">About the Project</a>
   </div>
-  <h1>Add a Rule</h1>
-  <form action="/add" id="textform" method="post">
+  <h2>Add a Rule</h2>
+  <form action="/addRule" id="textform" method="post">
     Source IP:
     <input type="text" name="src" placeholder="10.0.0.x">
     <br />
@@ -36,8 +36,7 @@
   </form>
   <br />
 
-  <a href="{{node_address}}/mine" target="_blank"><button class="button">Validate new block</button></a>
-  <a href="/"><button class="button">Resync</button></a>
+  <a href="/startFW"><button class="button">Enable Firewall Traffic</button></a>
 
   <h2>Current Rules</h2>
   <table id="connection">

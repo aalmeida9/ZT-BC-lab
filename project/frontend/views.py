@@ -38,11 +38,18 @@ userList = []
 def index():
     return render_template('index.html')
 
+# "Firewall Page"
+@app.route("/firewall")
+@app.route("/firewall.html")
+def fw():
+    return render_template('firewall.html',
+    rules = ruleList)
+
 # "Demonstrator Page"
 @app.route("/demo")
 @app.route("/demo.html")
 def demo():
-    get_rules()
+    # get_rules()
     return render_template('demo.html',
     hosts = hostList, users = userList)
 
@@ -59,12 +66,12 @@ def admin():
 def about():
     return render_template('about.html')
 
-# "Topology Page"
-@app.route("/topo")
-@app.route("/topo.html")
-def topo():
+# "Startup Page"
+@app.route("/startup")
+@app.route("/startup.html")
+def startup():
     network_topology = os.path.join(os.path.join('static'), 'topology.png')
-    return render_template('topo.html', network_image = network_topology)
+    return render_template('startup.html', network_image = network_topology)
 
 
 # 'Net Start'
@@ -75,18 +82,18 @@ def netstart(topo):
     return redirect('/topo')
 
 # 'Ryu Start'
-@app.route("/ryustart/<topo>")
-def ryustart(topo):
+@app.route("/ryustart")
+def ryustart():
     #cdCommand = 'cd ..'
-    ryuCommand = 'ryu-manager ryu.app.rest_firewall'.format(topo)
+    ryuCommand = 'ryu-manager ryu.app.rest_firewall'
     os.system("gnome-terminal -e 'bash -c \""+ryuCommand+";bash\"'")
     return redirect('/topo')
 
 # 'BC Start'
-@app.route("/bcstart/<topo>")
-def bcstart(topo):
+@app.route("/bcstart")
+def bcstart():
     #cdCommand = 'cd ..'
-    bcCommand = 'sudo python runBC.py'.format(topo)
+    bcCommand = 'python runBC.py'
     os.system("gnome-terminal -e 'bash -c \""+bcCommand+";bash\"'")
     return redirect('/topo')
 
@@ -125,8 +132,14 @@ def addUser():
     print(user)
     return redirect('/demo')
 
+@app.route("/startFW")
+def startFW():
+    #still need to enable communication manually on Firewall:
+    #put http://localhost:8080/firewall/module/enable/0000000000000001
+    return redirect('/firewall')
+
 #route for adding rules from the form to the BC/Controller
-@app.route("/add", methods=['POST'])
+@app.route("/addRule", methods=['POST'])
 def add():
     #Load neccessary attributes for firewall rule from HTML form
     ip_src = request.form["src"]
@@ -145,65 +158,12 @@ def add():
     }
 
     #add logic to stop duplicate rules
-
-    #authenticate firewall rules for allowing traffic with hashes from BC
-    if rule['actions'] == 'ALLOW':
-        #returns a String
-        ruleString = json.dumps(rule)
-        #creates a hash
-        ruleHash = sha256(ruleString.encode()).hexdigest()
-        for hashes in hashList:
-            if hashes == ruleHash:
-                print("Hash matched: {}".format(hashes))
-                print("Rule Authenticated: {}".format(rule))
-                #add a redirect to double check a rule as is?
-                if rule not in ruleList:
-                    ruleList.append(rule)
-                #break
-    else:
-        # Submit a transaction to the blockchain, only for DENY rules
-        new_tx_address = "{}/new_transaction".format(BC_ADDRESS)
-        mine_address = "{}/mine".format(BC_ADDRESS)
-
-        requests.post(new_tx_address, json=rule,
-        headers={'Content-type': 'application/json'})
+    ruleList.append(rule)
 
     #add rule to rest_firewall (validate allow actions with BC) (test this)
     address = "{}/firewall/rules/0000000000000001".format(RYU_ADDRESS)
     # POST request commented out for testing
-    #requests.post(address, json=rule,
-    #headers={'Content-type': 'application/json'})
+    requests.post(address, json=rule,
+    headers={'Content-type': 'application/json'})
 
-    return redirect('/')
-
-# get firewall rules from BC
-def get_rules():
-    chain_address = ""
-    response = ""
-    try:
-        chain_address = "{}/chain".format(BC_ADDRESS)
-        response = requests.get(chain_address)
-
-        #chain is a dict response.content is bytes
-        chain = json.loads(response.content)
-        for block in chain["chain"]:
-            for rule in block["transactions"]:
-                #inital logic for getting rule hashes on genesis block
-                if block["index"] == 0:
-                    hashList.append(rule)
-                else:
-                    if rule not in ruleList:
-                        ruleList.append(rule)
-    except requests.exceptions.RequestException as e:    # This is the correct syntax
-        print(e)
-        #print("Unable to access blockchain {}".format(response.status_code))
-
-#still need to enable communication manually on Firewall:
-#put http://localhost:8080/firewall/module/enable/0000000000000001
-
-# Example method to configure  firewall with rules based on BC
-# Add RequestExcept like above
-def post_rules():
-    address = "{}/firewall/rules/0000000000000001".format(RYU_ADDRESS)
-    rule = {"nw_src": "10.0.0.1/32", "nw_dst": "10.0.0.2/32", "nw_proto": "ICMP"}
-    r = requests.post(address, data=rule)
+    return redirect('/firewall')
