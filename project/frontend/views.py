@@ -93,7 +93,7 @@ def ryustart():
 @app.route("/bcstart")
 def bcstart():
     #cdCommand = 'cd ..'
-    bcCommand = 'python runBC.py'
+    bcCommand = 'sudo python runBC.py'
     os.system("gnome-terminal -e 'bash -c \""+bcCommand+";bash\"'")
     return redirect('/startup')
 
