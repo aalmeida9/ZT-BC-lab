@@ -3,7 +3,7 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-from frontend import views
+from frontend import views, firewall, sso, startup
 
 # Create Flask app with "app factory"
 def create_app():
