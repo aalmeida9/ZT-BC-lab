@@ -36,7 +36,7 @@ def demo():
 @app.route("/admin.html")
 def admin():
     return render_template('admin.html',
-    users = userList)
+    users = userList, node_address=BC_ADDRESS)
 
 # Get IP from hosts, potentially add a GET method for sending IPs to Ryu or BC
 @app.route("/getHost", methods=['POST'])
