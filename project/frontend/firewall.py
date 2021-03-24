@@ -22,13 +22,12 @@ def startFW():
     requests.put(address)
     return redirect('/firewall')
 
-#not currently working
 @app.route("/deleteRules")
 def deleteRules():
     #still need to enable communication manually on Firewall:
     #put http://localhost:8080/firewall/module/enable/0000000000000001
     address = "{}/firewall/rules/0000000000000001".format(RYU_ADDRESS)
-    delete = '{"rule_id": "all"}'
+    delete = {"rule_id": "all"}
     requests.delete(address, json=delete,
     headers={'Content-type': 'application/json'})
     return redirect('/firewall')
