@@ -73,7 +73,7 @@ def addUser():
 
 # Start of Certificates
 
-@app.route("/buildCSR")
+@app.route("/buildCSR", methods=['POST'])
 def csr():
     private_key = rsa.generate_private_key(
         public_exponent=65537,
@@ -81,6 +81,7 @@ def csr():
         backend=default_backend()
     )
 
+    # Configure with input from form
     req = x509.CertificateSigningRequestBuilder().subject_name(x509.Name([
         x509.NameAttribute(NameOID.COMMON_NAME, u'Server'),
         x509.NameAttribute(NameOID.ORGANIZATION_NAME, u'Test Server'),
@@ -104,14 +105,20 @@ def csr():
     PrivateFormat.TraditionalOpenSSL, NoEncryption())
     pem_req = req.public_bytes(Encoding.PEM)
 
-    #print("{}".format(pem_req.decode()))
     print(type(pem_req.decode()))
     print(type(pem_req))
     json_req = json.dumps(pem_req)
     json_key = json.dumps(pem_key)
     #print(test)
+    address = "{}/create_cert".format(BC_ADDRESS)
+    response = requests.post(address, json=json_req,
+        headers={'Content-type': 'application/json'})
 
-    return redirect('/')
+    cert = json.loads(response.text).encode('utf8')
+    print(cert)
+    cert = x509.load_pem_x509_certificate(cert, default_backend())
+
+    return redirect('/admin')
 
     # Send request to CA with REST
     # Move on to CA in node_server

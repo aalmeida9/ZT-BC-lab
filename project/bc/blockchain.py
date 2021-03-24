@@ -9,6 +9,7 @@ import uuid
 
 from hashlib import sha256
 import time
+import json
 
 
 #block could hold the information of the mac address table or flow table
@@ -155,7 +156,18 @@ class Blockchain:
             backend=default_backend()
         )
 
-        print(isinstance(certificate, x509.Certificate))
+
+        # print(isinstance(certificate, x509.Certificate))
+        # Save key and certificate to disk
+        with open("bc/keys/key.pem", "wb") as f:
+            f.write(private_key.private_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PrivateFormat.PKCS8,
+                encryption_algorithm=serialization.NoEncryption(),
+            ))
+
+        with open("bc/keys/cert.pem", "wb") as f:
+            f.write(certificate.public_bytes(serialization.Encoding.PEM))
 
 
     @property

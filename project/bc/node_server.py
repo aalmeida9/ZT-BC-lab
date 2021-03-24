@@ -1,6 +1,5 @@
 #Originally from:
 #https://github.com/satwikkansal/python_blockchain_app/tree/ibm_blockchain_post
-
 import json
 import time
 from flask import Flask, request
@@ -8,6 +7,15 @@ import requests
 from bc import app
 
 from .blockchain import Blockchain, Block
+#Temp imports
+
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes, serialization
+import datetime
+import uuid
+import unicodedata
+
 
 # the node's copy of blockchain
 blockchain = Blockchain()
@@ -19,7 +27,7 @@ peers = set()
 
 @app.route('/', methods=['GET'])
 def test():
-    return 'Test'
+    return 'BC Running'
 
 # endpoint to submit a new transaction. This will be used by
 # our application to add new data (posts) to the blockchain
@@ -202,6 +210,7 @@ def announce_new_block(block):
                       data=json.dumps(block.__dict__, sort_keys=True),
                       headers=headers)
 
+# Temporary placement, reorganize
 def generate_key(block):
     key = Fernet.generate_key()
     with open("secreet.key", "wb") as key_file:
@@ -210,5 +219,41 @@ def generate_key(block):
 def load_key():
     return open("secret.key", "rb").read()
 
-# Uncomment this line if you want to specify the port number in the code
-#app.run(debug=True, port=8000)
+@app.route('/create_cert', methods=['POST'])
+def create_cert():
+    # Load CSR from JSON
+    pem_csr = request.get_json()
+    pem_csr = json.loads(pem_csr).encode('utf8', 'ignore') #possibly 'ascii'
+    #unicodedata.normalize('NFKD', pem_csr)
+    csr = x509.load_pem_x509_csr(pem_csr, default_backend())
+
+    # Load root cert and key
+    pem_cert = open('bc/keys/cert.pem', 'rb').read()
+    ca = x509.load_pem_x509_certificate(pem_cert, default_backend())
+    pem_key = open('bc/keys/key.pem', 'rb').read()
+    ca_key = serialization.load_pem_private_key(pem_key, password=None,
+        backend=default_backend())
+
+    # Create new certificate
+    builder = x509.CertificateBuilder()
+    builder = builder.subject_name(csr.subject)
+    builder = builder.issuer_name(ca.subject)
+    builder = builder.not_valid_before(datetime.datetime.now())
+    builder = builder.not_valid_after(datetime.datetime.now() +
+        datetime.timedelta(7)) # 7 days
+    builder = builder.public_key(csr.public_key())
+    builder = builder.serial_number(int(uuid.uuid4()))
+    for ext in csr.extensions:
+        builder = builder.add_extension(ext.value, ext.critical)
+
+    certificate = builder.sign(
+        private_key = ca_key,
+        algorithm = hashes.SHA256(),
+        backend = default_backend()
+    )
+
+    # return or send certificate
+    with open('bc/keys/test.crt', 'wb') as f:
+        f.write(certificate.public_bytes(serialization.Encoding.PEM))
+
+    return json.dumps(certificate.public_bytes(serialization.Encoding.PEM))
