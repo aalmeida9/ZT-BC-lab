@@ -1,4 +1,4 @@
-import os
+import os, signal
 
 from flask import render_template, redirect, request
 from frontend import app
@@ -31,4 +31,24 @@ def bcstart():
     #cdCommand = 'cd ..'
     bcCommand = 'sudo python runBC.py'
     os.system("gnome-terminal -e 'bash -c \""+bcCommand+";bash\"'")
+    return redirect('/startup')
+
+# 'Kill'
+@app.route("/killT")
+def killT():
+    name = 'runBC.py'
+    try:
+
+        # iterating through each instance of the proess
+        for line in os.popen("ps ax | grep " + name + " | grep -v grep"):
+            fields = line.split()
+
+            # extracting Process ID from the output
+            pid = fields[0]
+
+            # terminating process
+            os.kill(int(pid), signal.SIGKILL)
+    except:
+        print("Error Encountered while running script")
+
     return redirect('/startup')
