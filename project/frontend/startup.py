@@ -17,11 +17,19 @@ def netstart(topo):
     os.system("gnome-terminal -e 'bash -c \""+command+";bash\"'")
     return redirect('/startup')
 
-# 'Ryu Start'
-@app.route("/ryustart")
-def ryustart():
+# 'Ryu Firewall Startup'
+@app.route("/FWstart")
+def FWstart():
     #cdCommand = 'cd ..'
     ryuCommand = 'ryu-manager ryu.app.rest_firewall'
+    os.system("gnome-terminal -e 'bash -c \""+ryuCommand+";bash\"'")
+    return redirect('/startup')
+
+# 'Ryu Single Sign-On Startup'
+@app.route("/SSOstart")
+def SSOstart():
+    #cdCommand = 'cd ..'
+    ryuCommand = 'ryu-manager sso.py'
     os.system("gnome-terminal -e 'bash -c \""+ryuCommand+";bash\"'")
     return redirect('/startup')
 
