@@ -376,7 +376,7 @@ class SSO(object):
         return REST_COMMAND_RESULT, msgs
 
     def _set_rule(self, cookie, rest, waiters, vlan_id):
-        print("Test _set_rule")
+
         priority = int(rest.get(REST_PRIORITY, ACL_FLOW_PRIORITY_MIN))
 
         if (priority < ACL_FLOW_PRIORITY_MIN
@@ -386,20 +386,20 @@ class SSO(object):
 
         if vlan_id:
             rest[REST_DL_VLAN] = vlan_id
-        print("Rest {}".format(rest))
+        #print("Rest {}".format(rest))
         match = Match.to_openflow(rest)
-        print("Match {}".format(match))
+        #print("Match {}".format(match))
         if rest.get(REST_ACTION) == REST_ACTION_DENY:
             result = self.get_log_status(waiters)
             if result[REST_LOG_STATUS] == REST_STATUS_ENABLE:
                 rest[REST_ACTION] = REST_ACTION_PACKETIN
-        print("Rest {}".format(rest))
+        #print("Rest {}".format(rest))
         actions = Action.to_openflow(rest)
-        print("Actions {}".format(actions))
+        #print("Actions {}".format(actions))
         # Consider where the flow is accessed
         flow = self._to_of_flow(cookie=cookie, priority=priority,
                                 match=match, actions=actions)
-        print("Flow {}".format(flow))
+        #print("Flow {}".format(flow))
 
         cmd = self.dp.ofproto.OFPFC_ADD
         try:
