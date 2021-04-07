@@ -60,7 +60,7 @@ def addUser():
     #host = hostList[host]
 
     user = {
-        'role': request.form["dropdown"],
+        'role': int(request.form["dropdown"]),
         'host': host["host"],
         'ip': host["ip"],
         'mac': host["mac"],
@@ -74,7 +74,7 @@ def addUser():
         userList.append(user)
 
     ip = user["ip"]
-    if(request.form["dropdown"] == "Admin"):
+    if(request.form["dropdown"] == "1"):
         certs[ip] = "temp"
         #certs.update(ip = "temp")
         print(certs)
@@ -82,13 +82,27 @@ def addUser():
     return redirect('/sso')
 
 
-@app.route("/startSSO", methods=['POST'])
+@app.route("/startSSO")
 def startSSO():
-    #for user in userList
-        #if user[ip] in certs.keys
+    for user in userList:
+        ip = user["ip"]
+        role = {
+            'nw_src': ip,
+            'role': user["role"]
+        }
+
+        if ip in certs.keys():
+            # print(user["ip"])
             #send role with cert, roles needs rule info from user
-        #else
-            #just send role,
+
+
+        role = json.dumps(role)
+        # print(role)
+        # print(type(role))
+        address = "{}/SSO/roles/0000000000000001".format(RYU_ADDRESS)
+        response = requests.post(address, json=role,
+            headers={'Content-type': 'application/json'})
+
 
         # Enable sso
     return "Succes"

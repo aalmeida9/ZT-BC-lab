@@ -388,9 +388,11 @@ class SSO_OfsList(dict):
         return dps
 
 # Roles that are accessed for configuring flow entries
+# ip: role
 role_table = {}
 # List of server IPs filled when SSO is enabled
-admins = []
+# make admins dict, ip: cert
+admins = {}
 
 class SSO_Controller(ControllerBase):
 
@@ -491,20 +493,30 @@ class SSO_Controller(ControllerBase):
                 print(item)
 
             # Go through admins and connect them to other other roles
-            for admin in admins:
+            for admin in admins.keys():
                 #validate certificate for admins
 
                 for ip, role in roles.items():
                     print("Admin: {} IP: {} role: {}".format(admin, ip, role))
+                    # avoid setting rules for the same src/dst
                     if admin != ip:
-                        print("add flow")
+
                         rule = {
                             'nw_src': admin,
                             'nw_dst': ip,
                             'nw_proto': 'ICMP',
                             'actions': 'ALLOW'
                         } # 'actions'
+                        print("add flow: {}".format(rule))
+                        f_ofs.set_rule(rule, self.waiters, VLANID_NONE)
 
+                        rule = {
+                            'nw_src': ip,
+                            'nw_dst': admin,
+                            'nw_proto': 'ICMP',
+                            'actions': 'ALLOW'
+                        } # 'actions'
+                        print("add flow: {}".format(rule))
                         f_ofs.set_rule(rule, self.waiters, VLANID_NONE)
 
         body = json.dumps(msgs)
@@ -526,7 +538,7 @@ class SSO_Controller(ControllerBase):
 
     # POST /SSO/rules/{switchid}
     def set_rule(self, req, switchid, **_kwargs):
-        print("Test, req: {}".format(req))
+        #print("Test, req: {}".format(req))
         return self._set_rule(req, switchid)
 
     # POST /SSO/rules/{switchid}/{vlanid}
@@ -552,15 +564,21 @@ class SSO_Controller(ControllerBase):
             SSO_Controller._LOGGER.debug('invalid syntax %s', req.body)
             return Response(status=400)
 
+        #print(role_req)
+        role_req = json.loads(role_req)
+
+        #print(type(role_req))
         role = role_req['role']
         src = role_req['nw_src']
 
         #roles = self.role_table.setdefault(switchid, {})
         role_table[src] = role
+        print(type(role))
         if(role == 1):
-            admins.append(src)
+            print("test")
+            admins[src] = " "
 
-        print("RT: {}, ROLE: {} SRC: {}".format(role_table, role, src))
+        print("RT: {} \n Admins: {}".format(role_table, admins))
 
         #body = json.dumps(role)
         #return Response(content_type='application/json', body=body)
