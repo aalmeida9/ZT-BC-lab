@@ -41,10 +41,30 @@ def bcstart():
     os.system("gnome-terminal -e 'bash -c \""+bcCommand+";bash\"'")
     return redirect('/startup')
 
-# 'Kill'
-@app.route("/killT")
-def killT():
-    name = 'runBC.py'
+# 'Kill RYU'
+@app.route("/killRyu")
+def killRyu():
+    name = 'firewall.py'
+    try:
+
+        # iterating through each instance of the proess
+        for line in os.popen("ps ax | grep " + name + " | grep -v grep"):
+            fields = line.split()
+
+            # extracting Process ID from the output
+            pid = fields[0]
+
+            # terminating process
+            os.kill(int(pid), signal.SIGKILL)
+    except:
+        print("Error Encountered while running script")
+
+    return redirect('/startup')
+
+    # 'Kill Mini'
+@app.route("/killMini")
+def killMini():
+    name = 'net1.py'
     try:
 
         # iterating through each instance of the proess
