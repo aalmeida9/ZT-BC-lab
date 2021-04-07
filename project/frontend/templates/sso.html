@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
 
 <head>
-  <title>Demo Page</title>
+  <title>Single Sign-On</title>
   <meta charset="utf-8">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}" media="screen">
@@ -13,7 +13,7 @@
   <div class="topnav">
     <a href="index.html">Main Hub</a>
     <a href="firewall.html">Firewall</a>
-    <a href="demo.html">Single Sign-On</a>
+    <a href="sso.html">Single Sign-On</a>
     <a href="about.html">About the Project</a>
   </div>
   <!-- <p>Create buttons for displaying net info with ofctl_rest, add a form to enter custom REST commands</p> -->
@@ -46,9 +46,12 @@
     <input type="submit" value="Post">
   </form>
 
-  <h1>Authorized Network Users</h1>
+  <h1>Network Users</h1>
+  <form action="/buildCSR" method="post">
+
   <table id="connection">
     <tr class="table_row">
+      <th></th>
       <th>Role</th>
       <th>Host</th>
       <th>IP</th>
@@ -57,6 +60,9 @@
     </tr>
     {% for user in users %}
     <tr class="table_row">
+      <td>
+        <input type="radio" name="userNum" value={{users.index(user)}} />
+      </td>
       <td>{{user.role}}</td>
       <td>{{user.host}}</td>
       <td>{{user.ip}}</td>
@@ -65,6 +71,27 @@
     </tr>
     {% endfor %}
   </table>
+
+  <h2>Generate Certificate Signing Request</h2>
+  <br>
+  <label for="name">Common Name:</label>
+  <input type="text" name="name" value="Admin"/><br><br>
+  <label for="org_name">Organization Name:</label>
+  <input type="text" name="org_name" value="SSO"/><br><br>
+  <label for="country">Country:</label>
+  <input type="text" name="country" value="US"/><br><br>
+  <label for="state">State:</label>
+  <input type="text" name="state" value="Massachusetts"/><br><br>
+  <label for="locality">Locality:</label>
+  <input type="text" name="locality" value="Dartmouth"/><br><br>
+
+  <input type="submit" value="Post">
+
+  </form>
+  <br>
+  <h2>Validate CSR with Blockchain Certificate Authority</h2>
+  <a href="{{node_address}}/mine" target="_blank"><button class="button">Validate new block</button></a>
+  <a href="/demo.html"><button class="button">Resync</button></a>
 
 </body>
 

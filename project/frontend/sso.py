@@ -23,13 +23,16 @@ hostList = []
 #users are hosts that have been configured with the Blockchain
 userList = []
 
+# Create a dictionary for certificates {ip: cert}
+certs = {}
+
 # "Demonstrator Page"
-@app.route("/demo")
-@app.route("/demo.html")
-def demo():
+@app.route("/sso")
+@app.route("/sso.html")
+def sso():
     # get_rules()
-    return render_template('demo.html',
-    hosts = hostList, users = userList)
+    return render_template('sso.html',
+    hosts = hostList, users = userList, node_address=BC_ADDRESS)
 
 # "Admin Page"
 @app.route("/admin")
@@ -53,9 +56,9 @@ def getHost():
 
 @app.route("/addUser", methods=['POST'])
 def addUser():
-    host = int(request.form["hostNum"])
+    host = hostList[int(request.form["hostNum"])]
+    #host = hostList[host]
 
-    host = hostList[host]
     user = {
         'role': request.form["dropdown"],
         'host': host["host"],
@@ -64,12 +67,32 @@ def addUser():
         'in': ''
     }
 
+    print(user["ip"])
+
     # check if host already configured in userList
     if user not in userList:
         userList.append(user)
 
-    print(user)
-    return redirect('/demo')
+    ip = user["ip"]
+    if(request.form["dropdown"] == "Admin"):
+        certs[ip] = "temp"
+        #certs.update(ip = "temp")
+        print(certs)
+
+    return redirect('/sso')
+
+
+@app.route("/startSSO", methods=['POST'])
+def startSSO():
+    #for user in userList
+        #if user[ip] in certs.keys
+            #send role with cert, roles needs rule info from user
+        #else
+            #just send role,
+
+        # Enable sso
+    return "Succes"
+
 
 # Start of Certificates
 
@@ -105,20 +128,30 @@ def csr():
     PrivateFormat.TraditionalOpenSSL, NoEncryption())
     pem_req = req.public_bytes(Encoding.PEM)
 
-    print(type(pem_req.decode()))
-    print(type(pem_req))
+    # print(type(pem_req.decode()))
+    # print(type(pem_req))
     json_req = json.dumps(pem_req)
     json_key = json.dumps(pem_key)
-    #print(test)
+
     address = "{}/create_cert".format(BC_ADDRESS)
     response = requests.post(address, json=json_req,
         headers={'Content-type': 'application/json'})
 
     cert = json.loads(response.text).encode('utf8')
     print(cert)
+
+    user = userList[int(request.form["userNum"])]
+    #user = userList[user]
+    print(user)
+    ip = user["ip"]
+    if(user['role'] == 'Admin'):
+        certs[ip] = cert
+        print(certs)
+
+    # Probably load_pem after certs
     cert = x509.load_pem_x509_certificate(cert, default_backend())
 
-    return redirect('/admin')
+    return redirect('/sso')
 
     # Send request to CA with REST
     # Move on to CA in node_server
