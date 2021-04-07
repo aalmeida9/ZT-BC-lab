@@ -21,7 +21,7 @@ def netstart(topo):
 @app.route("/FWstart")
 def FWstart():
     #cdCommand = 'cd ..'
-    ryuCommand = 'ryu-manager ryu.app.rest_firewall'
+    ryuCommand = 'ryu-manager firewall.py'
     os.system("gnome-terminal -e 'bash -c \""+ryuCommand+";bash\"'")
     return redirect('/startup')
 
@@ -29,7 +29,7 @@ def FWstart():
 @app.route("/SSOstart")
 def SSOstart():
     #cdCommand = 'cd ..'
-    ryuCommand = 'ryu-manager sso.py'
+    ryuCommand = 'ryu-manager rest_sso.py'
     os.system("gnome-terminal -e 'bash -c \""+ryuCommand+";bash\"'")
     return redirect('/startup')
 
