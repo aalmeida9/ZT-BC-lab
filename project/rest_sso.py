@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+import requests
 import logging
 import json
 
@@ -196,14 +196,6 @@ VLANID_MAX = 4094
 COOKIE_SHIFT_VLANID = 32
 
 
-
-    # Create a group entry for the server role
-# Then, check that the server is valid with CA (BC)
-# consider running http server in server for demo
-
-#New Notes:
-#Create routes for setting up a role table follow oldSSO table with different entries
-
 class SSO_API(app_manager.RyuApp):
 
     OFP_VERSIONS = [ofproto_v1_0.OFP_VERSION,
@@ -225,9 +217,6 @@ class SSO_API(app_manager.RyuApp):
         self.data = {}
         self.data['dpset'] = self.dpset
         self.data['waiters'] = self.waiters
-        # Table for roles, potentially move to another class or make getter/setter
-        # self.roles = {} move to SSO controller
-        #self.roles[dpid][src] = role, src is ip_src role is 0 by default
 
         mapper = wsgi.mapper
         wsgi.registory['SSO_Controller'] = self.data
@@ -237,11 +226,6 @@ class SSO_API(app_manager.RyuApp):
 
         # for SSO roles
         uri = path + '/roles/{switchid}'
-        # mapper.connect('SSO', uri,
-        #                 controller=SSO_Controller, action='get_roles',
-        #                 condition=dict(method=['GET']),
-        #                 requirement=requirements)
-
         mapper.connect('SSO', uri,
                         controller=SSO_Controller, action='set_role',
                         condition=dict(method=['POST']),
@@ -488,19 +472,40 @@ class SSO_Controller(ControllerBase):
 
         if(func == 'set_enable_flow'):
             roles = role_table
-            #print("flow enabled, test {}".format())
-            for item in roles:
-                print(item)
 
+            # Get certificates from chain data
+            req = requests.get("http://127.0.0.1:8000/chain",
+                headers={'Content-type': 'application/json'})
+            chain = req.json()
+            blockchain = chain["chain"]
+
+            # compare certifcate(s) in chain with cert from admin[chain ip]
             # Go through admins and connect them to other other roles
             for admin in admins.keys():
-                #validate certificate for admins
+                # get admin certificate from bc
+                certificate = {};
+                for block in blockchain:
+                    certificate = block["certificates"]
+                    #Skip root certificate
+                    if isinstance(certificate, str):
+                        continue
 
+                    if certificate["ip"] == admin:
+                            print("match")
+                            break;
+                        # need to force match otherwise break
+
+                #validate certificate for admins
+                if certificate["cert"] != admins.get(admin):
+                    print("certificates don't match for Admin".format(admin))
+                    break;
+                else:
+                    print("certificates match for Admin {}".format(admin))
+
+                # Configure flows between admins and other roles
                 for ip, role in roles.items():
-                    print("Admin: {} IP: {} role: {}".format(admin, ip, role))
                     # avoid setting rules for the same src/dst
                     if admin != ip:
-
                         rule = {
                             'nw_src': admin,
                             'nw_dst': ip,
@@ -521,8 +526,6 @@ class SSO_Controller(ControllerBase):
 
         body = json.dumps(msgs)
         return Response(content_type='application/json', body=body)
-
-    # GET /SSO/roles/{switchid}
 
     # POST /SSO/rules/{switchid}
     def set_role(self, req, switchid, **_kwags):
@@ -564,21 +567,15 @@ class SSO_Controller(ControllerBase):
             SSO_Controller._LOGGER.debug('invalid syntax %s', req.body)
             return Response(status=400)
 
-        #print(role_req)
         role_req = json.loads(role_req)
-
-        #print(type(role_req))
         role = role_req['role']
         src = role_req['nw_src']
 
         #roles = self.role_table.setdefault(switchid, {})
         role_table[src] = role
-        print(type(role))
         if(role == 1):
-            print("test")
-            admins[src] = " "
-
-        print("RT: {} \n Admins: {}".format(role_table, admins))
+            cert = role_req['cert']
+            admins[src] = cert
 
         #body = json.dumps(role)
         #return Response(content_type='application/json', body=body)
@@ -663,10 +660,6 @@ class SSO_Controller(ControllerBase):
         datapath = msg.datapath
         dpid = format(datapath.id, "d").zfill(16)
 
-        #self.roles.setdefault(dpid, {})
-        # Set default role to 0, need to get src
-        #self.roles[dpid][src] = 0
-        # get src/dst from packet
         pkt = packet.Packet(msg.data)
 
         # eth = pkt.get_protocols(ethernet.ethernet)[0]

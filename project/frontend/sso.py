@@ -41,7 +41,7 @@ def admin():
     return render_template('admin.html',
     users = userList, node_address=BC_ADDRESS)
 
-# Get IP from hosts, potentially add a GET method for sending IPs to Ryu or BC
+# Get IP from mininet hosts
 @app.route("/getHost", methods=['POST'])
 def getHost():
     # Need to process Dictionary, ip
@@ -53,11 +53,10 @@ def getHost():
 
     return '0'
 
-
+# Add user roles from the frontend
 @app.route("/addUser", methods=['POST'])
 def addUser():
     host = hostList[int(request.form["hostNum"])]
-    #host = hostList[host]
 
     user = {
         'role': int(request.form["dropdown"]),
@@ -67,21 +66,13 @@ def addUser():
         'in': ''
     }
 
-    print(user["ip"])
-
     # check if host already configured in userList
     if user not in userList:
         userList.append(user)
 
-    ip = user["ip"]
-    if(request.form["dropdown"] == "1"):
-        certs[ip] = "temp"
-        #certs.update(ip = "temp")
-        print(certs)
-
     return redirect('/sso')
 
-
+# Configures the SSO with rules configured based on each role then starts SSO
 @app.route("/startSSO")
 def startSSO():
     for user in userList:
@@ -92,26 +83,27 @@ def startSSO():
         }
 
         if ip in certs.keys():
-            # print(user["ip"])
+            role["cert"] = certs[ip]
+            print(role)
             #send role with cert, roles needs rule info from user
 
-
         role = json.dumps(role)
-        # print(role)
-        # print(type(role))
+
         address = "{}/SSO/roles/0000000000000001".format(RYU_ADDRESS)
         response = requests.post(address, json=role,
             headers={'Content-type': 'application/json'})
 
+    address = "{}/SSO/module/enable/0000000000000001".format(RYU_ADDRESS)
+    response = requests.put(address,
+        headers={'Content-type': 'application/json'})
 
-        # Enable sso
     return "Succes"
 
-
-# Start of Certificates
-
+# Create certificate signing request that is sent to CA (blockchain)
 @app.route("/buildCSR", methods=['POST'])
 def csr():
+    # Handle if user isn't selected
+
     private_key = rsa.generate_private_key(
         public_exponent=65537,
         key_size=2048,
@@ -140,27 +132,26 @@ def csr():
 
     pem_key = private_key.private_bytes(Encoding.PEM,
     PrivateFormat.TraditionalOpenSSL, NoEncryption())
-    pem_req = req.public_bytes(Encoding.PEM)
 
-    # print(type(pem_req.decode()))
-    # print(type(pem_req))
-    json_req = json.dumps(pem_req)
-    json_key = json.dumps(pem_key)
+    # consider link pem_req : public bytes and selected user : ip
+    pem_req = req.public_bytes(Encoding.PEM)
+    user = userList[int(request.form["userNum"])]
+    ip = user["ip"]
+
+    json_req = {
+         "csr": pem_req,
+         "ip": ip
+     }
 
     address = "{}/create_cert".format(BC_ADDRESS)
     response = requests.post(address, json=json_req,
         headers={'Content-type': 'application/json'})
 
     cert = json.loads(response.text).encode('utf8')
-    print(cert)
 
     user = userList[int(request.form["userNum"])]
-    #user = userList[user]
-    print(user)
-    ip = user["ip"]
-    if(user['role'] == 'Admin'):
+    if(user['role'] == 1):
         certs[ip] = cert
-        print(certs)
 
     # Probably load_pem after certs
     cert = x509.load_pem_x509_certificate(cert, default_backend())

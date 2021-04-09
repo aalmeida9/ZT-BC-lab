@@ -11,27 +11,17 @@ from hashlib import sha256
 import time
 import json
 
-
-#block could hold the information of the mac address table or flow table
-#mac address table contains the hosts connected to a switch and their ports
-#flow table contains in-port: #, eth-dst: Host -> output: Port
-
 #currently posts are stored in the BC and contain: Content, Author, timestamp
-#Transcations are data, and a block can contain one to many transacations
+# one block can technically contain multiple certificates
 class Block:
-    def __init__(self, index, transactions, timestamp, previous_hash, nonce=0):
+    def __init__(self, index, certificates, timestamp, previous_hash, nonce=0):
         self.index = index
-        # Transcations contains relevant user attributes
-        self.transactions = transactions
+        self.certificates = certificates
         # Consider using timestamp for certificate revocation
         self.timestamp = timestamp
         self.previous_hash = previous_hash
         self.nonce = nonce
-        self.generate_keys()
-        # Test for getter methods
-        #print(self.get_public_key)
-        #print(self.get_private_key)
-
+        #self.generate_keys() Only necessary for genesis block, root certificate
 
     def compute_hash(self):
         """
@@ -49,8 +39,6 @@ class Block:
             backend=default_backend()
         )
         public_key = private_key.public_key()
-        # Set public key for each block as an attribute,
-        # doesn't work due to json.dumps in compute_hash so just used get method
 
         # Store public and private keys for each block, to be accessed later
         pem = public_key.public_bytes(
@@ -99,7 +87,7 @@ class Blockchain:
     difficulty = 2
 
     def __init__(self):
-        self.unconfirmed_transactions = []
+        self.unconfirmed_certificates = {}
         self.chain = []
 
     def create_genesis_block(self):
@@ -109,16 +97,19 @@ class Blockchain:
         a valid hash.
         """
 
-        genesis_block = Block(0, 0, 0, "0")
+        cert = self.add_root_cert()
+        timestamp = datetime.datetime.now().__str__()
+        genesis_block = Block(0, cert, timestamp, "0")
+        genesis_block.generate_keys()
         genesis_block.hash = genesis_block.compute_hash()
-        # Generate a root certificate for the blockchain
-        self.add_cert(genesis_block)
+
         #append genesis block
         self.chain.append(genesis_block)
 
-    def add_cert(self, block):
+    def add_root_cert(self):
         """
-        A function that adds a certificate to a block
+        A function that adds the root certificate to for the Certificate
+        Authority.
         """
         # private_key = block.get_private_key
         # public_key = block.get_public_key
@@ -169,6 +160,8 @@ class Blockchain:
         with open("bc/keys/cert.pem", "wb") as f:
             f.write(certificate.public_bytes(serialization.Encoding.PEM))
 
+        return certificate.public_bytes(serialization.Encoding.PEM)
+
 
     @property
     def last_block(self):
@@ -209,8 +202,8 @@ class Blockchain:
 
         return computed_hash
 
-    def add_new_transaction(self, transaction):
-        self.unconfirmed_transactions.append(transaction)
+    def add_new_certificate(self, certificate):
+        self.unconfirmed_certificates = certificate
 
     @classmethod
     def is_valid_proof(cls, block, block_hash):
@@ -244,22 +237,22 @@ class Blockchain:
     def mine(self):
         """
         This function serves as an interface to add the pending
-        transactions to the blockchain by adding them to the block
+        certificates to the blockchain by adding them to the block
         and figuring out Proof Of Work.
         """
-        if not self.unconfirmed_transactions:
+        if not self.unconfirmed_certificates:
             return False
 
         last_block = self.last_block
-
+        print(self.unconfirmed_certificates)
         new_block = Block(index=last_block.index + 1,
-                          transactions=self.unconfirmed_transactions,
+                          certificates=self.unconfirmed_certificates,
                           timestamp=time.time(),
                           previous_hash=last_block.hash)
 
         proof = self.proof_of_work(new_block)
         self.add_block(new_block, proof)
 
-        self.unconfirmed_transactions = []
+        self.unconfirmed_certificates = {}
 
         return True

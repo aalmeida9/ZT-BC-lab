@@ -29,10 +29,9 @@ peers = set()
 def test():
     return 'BC Running'
 
-# endpoint to submit a new transaction. This will be used by
-# our application to add new data (posts) to the blockchain
-@app.route('/new_transaction', methods=['POST'])
-def new_transaction():
+# endpoint to submit a new certificate, not used currently
+@app.route('/new_certificate', methods=['POST'])
+def new_certificate():
     tx_data = request.get_json()
     #Old Implementation with firewall rules
     #required_fields = ["nw_src", "nw_dst", "nw_proto", "actions"]
@@ -40,18 +39,14 @@ def new_transaction():
 
     for field in required_fields:
         if not tx_data.get(field):
-            return "Invalid transaction data", 404
+            return "Invalid certificate data", 404
 
-    #tx_data["timestamp"] = time.time()
-
-    blockchain.add_new_transaction(tx_data)
+    blockchain.add_new_certificate(tx_data)
 
     return "Success", 201
 
 
 # endpoint to return the node's copy of the chain.
-# Our application will be using this endpoint to query
-# all the posts to display.
 @app.route('/chain', methods=['GET'])
 def get_chain():
     chain_data = []
@@ -62,14 +57,12 @@ def get_chain():
                        "peers": list(peers)})
 
 
-# endpoint to request the node to mine the unconfirmed
-# transactions (if any). We'll be using it to initiate
-# a command to mine from our application itself.
+# endpoint to request the node to mine the unconfirmed certificates (if any).
 @app.route('/mine', methods=['GET'])
-def mine_unconfirmed_transactions():
+def mine_unconfirmed_certificates():
     result = blockchain.mine()
     if not result:
-        return "No transactions to mine"
+        return "No certificates to mine"
     else:
         # Making sure we have the longest chain before announcing to the network
         chain_length = len(blockchain.chain)
@@ -79,8 +72,61 @@ def mine_unconfirmed_transactions():
             announce_new_block(blockchain.last_block)
         return "Block #{} is mined.".format(blockchain.last_block.index)
 
+@app.route('/create_cert', methods=['POST'])
+def create_cert():
+    # Load JSON from request
+    req = request.get_json()
 
-# not sure how useful this code will be for MVP
+    # Old method of loading csr
+    #pem_csr = json.loads((pem_csr["csr"])).encode('utf8', 'ignore') #possibly 'ascii'
+    pem_csr = req["csr"].encode('utf8', 'ignore') #possibly 'ascii'
+    csr = x509.load_pem_x509_csr(pem_csr, default_backend())
+
+    # Load root cert and key
+    pem_cert = open('bc/keys/cert.pem', 'rb').read()
+    ca = x509.load_pem_x509_certificate(pem_cert, default_backend())
+    pem_key = open('bc/keys/key.pem', 'rb').read()
+    ca_key = serialization.load_pem_private_key(pem_key, password=None,
+        backend=default_backend())
+
+    # Create new certificate
+    builder = x509.CertificateBuilder()
+    builder = builder.subject_name(csr.subject)
+    builder = builder.issuer_name(ca.subject)
+    builder = builder.not_valid_before(datetime.datetime.now())
+    builder = builder.not_valid_after(datetime.datetime.now() +
+        datetime.timedelta(7)) # 7 days
+    builder = builder.public_key(csr.public_key())
+    builder = builder.serial_number(int(uuid.uuid4()))
+    for ext in csr.extensions:
+        builder = builder.add_extension(ext.value, ext.critical)
+
+    certificate = builder.sign(
+        private_key = ca_key,
+        algorithm = hashes.SHA256(),
+        backend = default_backend()
+    )
+
+    # return or send certificate
+    with open('bc/keys/test.crt', 'wb') as f:
+        f.write(certificate.public_bytes(serialization.Encoding.PEM))
+
+    cert = certificate.public_bytes(serialization.Encoding.PEM)
+    new_cert = {
+        "cert": cert,
+        "ip": req["ip"]
+    }
+    blockchain.add_new_certificate(new_cert)
+    blockchain.mine()
+
+    return json.dumps(certificate.public_bytes(serialization.Encoding.PEM))
+
+@app.route('/get_cert', methods=['GET'])
+def get_cert():
+    return open("bc/keys/test.crt", "rb").read()
+
+
+# not sure how useful this code will be for current project plan
 # endpoint to add new peers to the network.
 @app.route('/register_node', methods=['POST'])
 def register_new_peers():
@@ -134,7 +180,7 @@ def create_chain_from_dump(chain_dump):
         if idx == 0:
             continue  # skip genesis block
         block = Block(block_data["index"],
-                      block_data["transactions"],
+                      block_data["certificates"],
                       block_data["timestamp"],
                       block_data["previous_hash"],
                       block_data["nonce"])
@@ -152,7 +198,7 @@ def create_chain_from_dump(chain_dump):
 def verify_and_add_block():
     block_data = request.get_json()
     block = Block(block_data["index"],
-                  block_data["transactions"],
+                  block_data["certificates"],
                   block_data["timestamp"],
                   block_data["previous_hash"],
                   block_data["nonce"])
@@ -166,10 +212,10 @@ def verify_and_add_block():
     return "Block added to the chain", 201
 
 
-# endpoint to query unconfirmed transactions
+# endpoint to query unconfirmed certificates
 @app.route('/pending_tx')
 def get_pending_tx():
-    return json.dumps(blockchain.unconfirmed_transactions)
+    return json.dumps(blockchain.unconfirmed_certificates)
 
 
 def consensus():
@@ -209,51 +255,3 @@ def announce_new_block(block):
         requests.post(url,
                       data=json.dumps(block.__dict__, sort_keys=True),
                       headers=headers)
-
-# Temporary placement, reorganize
-def generate_key(block):
-    key = Fernet.generate_key()
-    with open("secreet.key", "wb") as key_file:
-        key_file.write(key)
-
-def load_key():
-    return open("secret.key", "rb").read()
-
-@app.route('/create_cert', methods=['POST'])
-def create_cert():
-    # Load CSR from JSON
-    pem_csr = request.get_json()
-    pem_csr = json.loads(pem_csr).encode('utf8', 'ignore') #possibly 'ascii'
-    #unicodedata.normalize('NFKD', pem_csr)
-    csr = x509.load_pem_x509_csr(pem_csr, default_backend())
-
-    # Load root cert and key
-    pem_cert = open('bc/keys/cert.pem', 'rb').read()
-    ca = x509.load_pem_x509_certificate(pem_cert, default_backend())
-    pem_key = open('bc/keys/key.pem', 'rb').read()
-    ca_key = serialization.load_pem_private_key(pem_key, password=None,
-        backend=default_backend())
-
-    # Create new certificate
-    builder = x509.CertificateBuilder()
-    builder = builder.subject_name(csr.subject)
-    builder = builder.issuer_name(ca.subject)
-    builder = builder.not_valid_before(datetime.datetime.now())
-    builder = builder.not_valid_after(datetime.datetime.now() +
-        datetime.timedelta(7)) # 7 days
-    builder = builder.public_key(csr.public_key())
-    builder = builder.serial_number(int(uuid.uuid4()))
-    for ext in csr.extensions:
-        builder = builder.add_extension(ext.value, ext.critical)
-
-    certificate = builder.sign(
-        private_key = ca_key,
-        algorithm = hashes.SHA256(),
-        backend = default_backend()
-    )
-
-    # return or send certificate
-    with open('bc/keys/test.crt', 'wb') as f:
-        f.write(certificate.public_bytes(serialization.Encoding.PEM))
-
-    return json.dumps(certificate.public_bytes(serialization.Encoding.PEM))
