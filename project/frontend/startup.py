@@ -20,6 +20,20 @@ def netstart(topo):
 # 'Ryu Firewall Startup'
 @app.route("/FWstart")
 def FWstart():
+    name = 'rest_sso.py'
+    try:
+
+        # iterating through each instance of the proess
+        for line in os.popen("ps ax | grep " + name + " | grep -v grep"):
+            fields = line.split()
+
+            # extracting Process ID from the output
+            pid = fields[0]
+
+            # terminating process
+            os.kill(int(pid), signal.SIGKILL)
+    except:
+        print("Error Encountered while running script")
     #cdCommand = 'cd ..'
     ryuCommand = 'ryu-manager firewall.py'
     os.system("gnome-terminal -e 'bash -c \""+ryuCommand+";bash\"'")
@@ -28,6 +42,20 @@ def FWstart():
 # 'Ryu Single Sign-On Startup'
 @app.route("/SSOstart")
 def SSOstart():
+    name = 'firewall.py'
+    try:
+
+        # iterating through each instance of the proess
+        for line in os.popen("ps ax | grep " + name + " | grep -v grep"):
+            fields = line.split()
+
+            # extracting Process ID from the output
+            pid = fields[0]
+
+            # terminating process
+            os.kill(int(pid), signal.SIGKILL)
+    except:
+        print("Error Encountered while running script")
     #cdCommand = 'cd ..'
     ryuCommand = 'ryu-manager rest_sso.py'
     os.system("gnome-terminal -e 'bash -c \""+ryuCommand+";bash\"'")
