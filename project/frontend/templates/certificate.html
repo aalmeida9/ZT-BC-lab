@@ -18,9 +18,18 @@
   </div>
 
   <h1>Network Certificates</h1>
-  {% for cert in certs %}
-  <p>{{cert}}</p>
-  {% endfor %}
+  <table id="connection">
+    <tr class="table_row">
+      <th>IP</th>
+      <th>Certificate</th>
+    </tr>
+    {% for ip, cert in certs.items() %}
+    <tr class="table_row">
+      <td>{{ip}}</td>
+      <td>{{cert}}</td>
+    </tr>
+    {% endfor %}
+  </table>
 
 </body>
 

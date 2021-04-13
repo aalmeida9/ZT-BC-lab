@@ -39,7 +39,7 @@ def sso():
 @app.route("/certificate.html")
 def certificate():
     return render_template('certificate.html',
-    users = userList, node_address=BC_ADDRESS, certs = certs.values())
+    users = userList, node_address=BC_ADDRESS, certs = certs)
 
 # Get IP from mininet hosts
 @app.route("/getHost", methods=['POST'])
@@ -149,10 +149,9 @@ def csr():
 
     cert = json.loads(response.text).encode('utf8')
     print(cert)
-
-    user = userList[int(request.form["userNum"])]
-    if(user['role'] == 1):
-        certs[ip] = cert
+    # Probably not necessary since SSO compares admin ip with cert ip
+    # if(user['role'] == 1):
+    certs[ip] = cert
 
     # Probably load_pem after certs
     cert = x509.load_pem_x509_certificate(cert, default_backend())
