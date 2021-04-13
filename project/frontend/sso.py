@@ -35,11 +35,11 @@ def sso():
     hosts = hostList, users = userList, node_address=BC_ADDRESS)
 
 # "Admin Page"
-@app.route("/admin")
-@app.route("/admin.html")
-def admin():
-    return render_template('admin.html',
-    users = userList, node_address=BC_ADDRESS)
+@app.route("/certificate")
+@app.route("/certificate.html")
+def certificate():
+    return render_template('certificate.html',
+    users = userList, node_address=BC_ADDRESS, certs = certs.values())
 
 # Get IP from mininet hosts
 @app.route("/getHost", methods=['POST'])
@@ -148,6 +148,7 @@ def csr():
         headers={'Content-type': 'application/json'})
 
     cert = json.loads(response.text).encode('utf8')
+    print(cert)
 
     user = userList[int(request.form["userNum"])]
     if(user['role'] == 1):

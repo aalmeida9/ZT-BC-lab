@@ -4,7 +4,7 @@
 <head>
   <title>Main Hub</title>
   <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}" media="screen">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/card.css') }}">
 
@@ -19,7 +19,7 @@
       <div class="dropdown-content">
         <a href="startup">Startup</a>
         <a href="sso.html">Network Hosts</a>
-        <a href="admin.html">Certificates</a>
+        <a href="certificate.html">Certificates</a>
       </div>
     </div>
     <a href="firewall.html">Firewall</a>
@@ -35,7 +35,7 @@
         <img src="network1.png" alt="" style="width:100%">
         <div class="container">
           <h4><b>Network Startup</b></h4>
-          <p>Start the Mininet emulation, Ryu controller, and example Blockchain with one click.</p>
+          <p>Start the Mininet emulation, Ryu controller, and Blockchain</p>
           <a href="startup.html"><button type="button" class="button">Startup</button></a>
         </div>
       </div>
@@ -70,7 +70,7 @@
           <h4><b>Network Certificates</b></h4>
           <p>Allows the demonstrator to view digital certificates used by the Network</p>
           <br>
-          <a href="admin.html"><button type="button" class="button">Certificates</button></a>
+          <a href="certificate.html"><button type="button" class="button">Certificates</button></a>
         </div>
       </div>
     </div>

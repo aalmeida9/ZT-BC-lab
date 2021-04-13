@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <title>Certificates</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}" media="screen">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
+</head>
+
+<body>
+  <div class="topnav">
+    <a href="index.html">Main Hub</a>
+    <a href="firewall.html">Firewall</a>
+    <a href="sso.html">Single Sign-On</a>
+    <a href="about.html">About the Project</a>
+  </div>
+
+  <h1>Network Certificates</h1>
+  {% for cert in certs %}
+  <p>{{cert}}</p>
+  {% endfor %}
+
+</body>
+
+</html>

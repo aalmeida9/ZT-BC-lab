@@ -32,13 +32,15 @@ from mininet.node import RemoteController, OVSSwitch
 # https://blog.sflow.com/2019/06/mininet-flow-analytics-with-custom.html
 
 class MinimalTopo( Topo ):
-    "Minimal topology with a single switch and 3 hosts"
+    "Minimal topology with a single switch and 5 hosts"
 
     def build( self ):
-        # Create 3 hosts.
-        h1 = self.addHost( 'h1', password = "test" )
+        # Create 5 hosts.
+        h1 = self.addHost( 'h1' )
         h2 = self.addHost( 'h2' )
         h3 = self.addHost( 'h3' )
+        h4 = self.addHost( 'h4' )
+        h5 = self.addHost( 'h5' )
 
         # Create a switch
         s1 = self.addSwitch( 's1' )
@@ -47,6 +49,8 @@ class MinimalTopo( Topo ):
         self.addLink( s1, h1 )
         self.addLink( s1, h2 )
         self.addLink( s1, h3 )
+        self.addLink( s1, h4 )
+        self.addLink( s1, h5 )
 
 
 def runMinimalTopo():
@@ -69,7 +73,6 @@ def runMinimalTopo():
     # Interesting
     # print("Dumping host connections")
     # connections = dumpNodeConnections(net.hosts)
-    # print(type(connections))
     # result = h1.cmd('ifconfig')
     # print(result)
     #pid = int( h1.cmd('echo $!') )
