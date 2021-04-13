@@ -46,3 +46,8 @@
         margin-bottom: 20px;
     }
 }
+
+/* Remove margin from edge of screen*/
+body {
+  margin: 0px 0px 0px 0px;
+}
