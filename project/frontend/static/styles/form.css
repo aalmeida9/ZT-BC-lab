@@ -1,0 +1,23 @@
+input{
+  padding: 5px 20px;
+  margin: 6px 0;
+  box-sizing: border-box;
+  border: 1px solid black;
+  background-color: #4CAF50;
+  color: white;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  outline: none;
+}
+
+input:focus {
+  border: 3px solid green;
+}
+
+select{
+  padding: 6px 20px;
+  box-sizing: border-box;
+  border: 1px solid black;
+  background-color: #4CAF50;
+  color: white;
+}
