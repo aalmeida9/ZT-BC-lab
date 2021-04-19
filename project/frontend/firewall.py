@@ -13,15 +13,18 @@ ruleList = []
 @app.route("/firewall")
 @app.route("/firewall.html")
 def fw():
-    return render_template('firewall.html',
-    rules = ruleList)
+    return render_template('firewall.html', rules = ruleList)
 
 @app.route("/startFW")
 def startFW():
-    address = "{}/firewall/module/enable/0000000000000001".format(RYU_ADDRESS)
-    requests.put(address)
+    try:
+        address = "{}/firewall/module/enable/0000000000000001".format(RYU_ADDRESS)
+        requests.put(address)
+    except:
+        print("Firewall App not running")
     return redirect('/firewall')
 
+# Not used for demo
 @app.route("/deleteRules")
 def deleteRules():
     #still need to enable communication manually on Firewall:
@@ -51,13 +54,36 @@ def add():
         'actions': action
     }
 
-    #add logic to stop duplicate rules
-    ruleList.append(rule)
-
-    #add rule to rest_firewall (validate allow actions with BC) (test this)
+    #add rule to Ryu rest_firewall
     address = "{}/firewall/rules/0000000000000001".format(RYU_ADDRESS)
-    # POST request commented out for testing
-    requests.post(address, json=rule,
-    headers={'Content-type': 'application/json'})
+    try:
+        # Check for bidirectional rules
+        if request.form["direction"] == "both":
+            requests.post(address, json=rule,
+            headers={'Content-type': 'application/json'})
+            if rule not in ruleList:
+                ruleList.append(rule)
+            else:
+                print("Rule already added")
+
+            # Switch rule src/dst
+            rule = {
+                'nw_src': ip_dst,
+                'nw_dst': ip_src,
+                'nw_proto': proto_type,
+                'actions': action
+            }
+            requests.post(address, json=rule,
+            headers={'Content-type': 'application/json'})
+        else:
+            requests.post(address, json=rule,
+            headers={'Content-type': 'application/json'})
+    except:
+        print("Firewall App not running")
+    
+    if rule not in ruleList:
+        ruleList.append(rule)
+    else:
+        print("Rule already added")
 
     return redirect('/firewall')

@@ -25,14 +25,14 @@
     <a href="about.html">About the Project</a>
   </div>
 
-  <h2>Topology Options</h2>
+  <br>
   <div class="row">
     <div class="column">
       <div class="card">
-        <img src="{{ network_image }}" alt="" style="width:100%">
+        <img src="{{ net1 }}" alt="" style="width:100%">
         <div class="container">
           <h4><b>Network 1</b></h4>
-          <p>Network 1 contains 3 hosts connected to one switch</p>
+          <p>Network 1 contains 3 hosts connected to a switch</p>
           <a href="netstart/1"><button type="button" class="button">Startup</button></a>
         </div>
       </div>
@@ -40,20 +40,21 @@
 
     <div class="column">
       <div class="card">
-        <img src="img_avatar.png" alt="" style="width:100%">
+      <img src="{{ net2 }}" alt="" style="width:100%">
         <div class="container">
           <h4><b>Network 2</b></h4>
-          <p></p><br>
+          <p>Network 1 contains 5 hosts connected to a switch</p>
           <a href="netstart/2"><button type="button" class="button">Startup</button></a>
         </div>
       </div>
     </div>
     <div class="column">
-      <a href="FWstart"><button type="button" class="button">Ryu Firewall</button></a>
-      <a href="SSOstart"><button type="button" class="button">Ryu Single Sign-On</button></a><br>
-      <a href="bcstart"><button type="button" class="button">Blockchain</button></a><br>
-      <a href="killRyu"><button type="button" class="button">TerminateRyu</button></a>
-      <a href="killMini"><button type="button" class="button">TerminateMini</button></a><br>
+      <h2>Ryu Applications</h2>
+      <a href="FWstart"><button type="button" class="button">Firewall</button></a>
+      <a href="SSOstart"><button type="button" class="button">Single Sign-On</button></a><br>
+      <h2>Blockchain Application</h2>
+      <a href="bcstart"><button type="button" class="button">Certificate Authority</button></a><br>
+
     </div>
   </div>
 

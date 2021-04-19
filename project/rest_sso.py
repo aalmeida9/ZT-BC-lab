@@ -474,16 +474,23 @@ class SSO_Controller(ControllerBase):
             roles = role_table
 
             # Get certificates from chain data
-            req = requests.get("http://127.0.0.1:8000/chain",
-                headers={'Content-type': 'application/json'})
-            chain = req.json()
-            blockchain = chain["chain"]
+            try:
+                req = requests.get("http://127.0.0.1:8000/chain",
+                    headers={'Content-type': 'application/json'})
+                chain = req.json()
+                blockchain = chain["chain"]
+            except:
+                print("Unable to connect to CA")
 
             # compare certifcate(s) in chain with cert from admin[chain ip]
             # Go through admins and connect them to other other roles
             for admin in admins.keys():
                 # get admin certificate from bc
                 certificate = {};
+                if req.status_code != 200:
+                    print("Error loading certificates from CA")
+                    break
+
                 for block in blockchain:
                     certificate = block["certificates"]
                     #Skip root certificate
@@ -502,7 +509,8 @@ class SSO_Controller(ControllerBase):
                 else:
                     print("certificates match for Admin {}".format(admin))
 
-                # Configure flows between admins and other roles
+                # Configure flows between admins and other roles, and
+                # hosts with same roles
                 for ip, role in roles.items():
                     # avoid setting rules for the same src/dst
                     if admin != ip:
@@ -523,6 +531,27 @@ class SSO_Controller(ControllerBase):
                         } # 'actions'
                         print("add flow: {}".format(rule))
                         f_ofs.set_rule(rule, self.waiters, VLANID_NONE)
+                    # Set rules between hosts with same role
+                    for ip2, role2, in roles.items():
+                        # avoid setting rules for the same src/dst
+                        if ip2 != ip and role == role2:
+                            rule = {
+                                'nw_src': ip,
+                                'nw_dst': ip2,
+                                'nw_proto': 'ICMP',
+                                'actions': 'ALLOW'
+                            } # 'actions'
+                            print("add flow: {}".format(rule))
+                            f_ofs.set_rule(rule, self.waiters, VLANID_NONE)
+
+                            rule = {
+                                'nw_src': ip2,
+                                'nw_dst': ip,
+                                'nw_proto': 'ICMP',
+                                'actions': 'ALLOW'
+                            } # 'actions'
+                            print("add flow: {}".format(rule))
+                            f_ofs.set_rule(rule, self.waiters, VLANID_NONE)
 
         body = json.dumps(msgs)
         return Response(content_type='application/json', body=body)
@@ -574,8 +603,11 @@ class SSO_Controller(ControllerBase):
         #roles = self.role_table.setdefault(switchid, {})
         role_table[src] = role
         if(role == 1):
-            cert = role_req['cert']
-            admins[src] = cert
+            try:
+                cert = role_req['cert']
+                admins[src] = cert
+            except:
+                print("No certificate sent with admin")
 
         #body = json.dumps(role)
         #return Response(content_type='application/json', body=body)

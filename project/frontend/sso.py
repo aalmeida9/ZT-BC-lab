@@ -62,8 +62,7 @@ def addUser():
         'role': int(request.form["dropdown"]),
         'host': host["host"],
         'ip': host["ip"],
-        'mac': host["mac"],
-        'in': ''
+        'mac': host["mac"]
     }
 
     # check if host already configured in userList
@@ -97,7 +96,7 @@ def startSSO():
     response = requests.put(address,
         headers={'Content-type': 'application/json'})
 
-    return "Succes"
+    return redirect('/sso')
 
 # Create certificate signing request that is sent to CA (blockchain)
 @app.route("/buildCSR", methods=['POST'])
@@ -110,10 +109,16 @@ def csr():
         backend=default_backend()
     )
 
-    # Configure with input from form
+    # Configure CSR with input from form
+    name = request.form["name"]
+    org_name = request.form["org_name"]
+    country = request.form["country"]
+    state = request.form["state"]
+    locality = request.form["locality"]
+
     req = x509.CertificateSigningRequestBuilder().subject_name(x509.Name([
-        x509.NameAttribute(NameOID.COMMON_NAME, u'Server'),
-        x509.NameAttribute(NameOID.ORGANIZATION_NAME, u'Test Server'),
+        x509.NameAttribute(NameOID.COMMON_NAME, name),
+        x509.NameAttribute(NameOID.ORGANIZATION_NAME, org_name),
         x509.NameAttribute(NameOID.COUNTRY_NAME, u'US'),
         x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, u'Massachusetts'),
         x509.NameAttribute(NameOID.LOCALITY_NAME, u'Dartmouth'),
@@ -138,28 +143,25 @@ def csr():
     user = userList[int(request.form["userNum"])]
     ip = user["ip"]
 
-    json_req = {
-         "csr": pem_req,
-         "ip": ip
-     }
+    json_req = {"csr": pem_req, "ip": ip}
 
-    address = "{}/create_cert".format(BC_ADDRESS)
-    response = requests.post(address, json=json_req,
+    try:
+        address = "{}/create_cert".format(BC_ADDRESS)
+        response = requests.post(address, json=json_req,
         headers={'Content-type': 'application/json'})
 
-    cert = json.loads(response.text).encode('utf8')
-    print(cert)
-    # Probably not necessary since SSO compares admin ip with cert ip
-    # if(user['role'] == 1):
-    certs[ip] = cert
 
-    # Probably load_pem after certs
-    cert = x509.load_pem_x509_certificate(cert, default_backend())
+        cert = json.loads(response.text).encode('utf8')
+        certs[ip] = cert
+
+        # Probably load_pem after certs
+        cert = x509.load_pem_x509_certificate(cert, default_backend())
+    except:
+        print("Unable to connect to CA")
+
+
 
     return redirect('/sso')
-
-    # Send request to CA with REST
-    # Move on to CA in node_server
 
     # with open('test.csr', 'wb') as f:
     #     f.write(request.public_bytes(Encoding.PEM))

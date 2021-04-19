@@ -58,19 +58,23 @@
       <th>Host</th>
       <th>IP</th>
       <th>MAC</th>
-      <th>Port</th>
     </tr>
     {% for user in users %}
-    <tr class="table_row">
-      <td>
-        <input type="radio" name="userNum" value={{users.index(user)}} />
-      </td>
-      <td>{{user.role}}</td>
-      <td>{{user.host}}</td>
-      <td>{{user.ip}}</td>
-      <td>{{user.mac}}</td>
-      <td>{{user.in}}</td>
-    </tr>
+      <tr class="table_row">
+        <td>
+          <input type="radio" name="userNum" value={{users.index(user)}} />
+        </td>
+        {% if user.role == 0 %}
+          <td>Worker</td>
+        {% elif user.role == 1 %}
+          <td>Admin</td>
+        {% elif user.role == 2 %}
+          <td>Server</td>
+        {% endif %}
+        <td>{{user.host}}</td>
+        <td>{{user.ip}}</td>
+        <td>{{user.mac}}</td>
+      </tr>
     {% endfor %}
   </table>
 
@@ -92,9 +96,6 @@
   </form>
   <br>
   <a href="/startSSO"><button class="button">Enable Single Sign-On Traffic</button></a>
-  <h2>Validate CSR with Blockchain Certificate Authority</h2>
-  <a href="{{node_address}}/mine" target="_blank"><button class="button">Validate new block</button></a>
-  <a href="/demo.html"><button class="button">Resync</button></a>
 
 </body>
 

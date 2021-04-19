@@ -11,8 +11,6 @@ from hashlib import sha256
 import time
 import json
 
-#currently posts are stored in the BC and contain: Content, Author, timestamp
-# one block can technically contain multiple certificates
 class Block:
     def __init__(self, index, certificates, timestamp, previous_hash, nonce=0):
         self.index = index
@@ -21,7 +19,7 @@ class Block:
         self.timestamp = timestamp
         self.previous_hash = previous_hash
         self.nonce = nonce
-        #self.generate_keys() Only necessary for genesis block, root certificate
+        self.generate_keys() #
 
     def compute_hash(self):
         """
@@ -31,8 +29,12 @@ class Block:
         return sha256(block_string.encode()).hexdigest()
 
     def generate_keys(self):
-        # generate public and private key pair, from:
-        # https://nitratine.net/blog/post/asymmetric-encryption-and-decryption-in-python/
+        """
+        A function to generate public and private key pair. Only necessary for
+        root certificate in genesis block.
+        From:
+        https://nitratine.net/blog/post/asymmetric-encryption-and-decryption-in-python/
+        """
         private_key = rsa.generate_private_key(
             public_exponent=65537,
             key_size=2048,
