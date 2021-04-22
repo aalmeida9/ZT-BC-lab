@@ -3,9 +3,8 @@
 
 <head>
   <title>Single Sign-On</title>
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}" media="screen">
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/form.css') }}">
 
@@ -18,9 +17,8 @@
     <a href="sso.html">Single Sign-On</a>
     <a href="about.html">About the Project</a>
   </div>
-  <!-- <p>Create buttons for displaying net info with ofctl_rest, add a form to enter custom REST commands</p> -->
 
-  <h1>Network Hosts</h1>
+  <h2>Network Hosts</h2>
   <form action="/addUser" id="textform" method="post">
     <table id="connection">
       <tr class="table_row">
@@ -48,7 +46,7 @@
     <input type="submit" value="Post">
   </form>
 
-  <h1>Network Users</h1>
+  <h2>Network Users</h2>
   <form action="/buildCSR" method="post">
 
   <table id="connection">

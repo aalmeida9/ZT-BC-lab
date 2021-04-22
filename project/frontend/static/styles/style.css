@@ -44,7 +44,7 @@ h2 {
 
 .button {
     background-color: #4CAF50;
-    border: none;
+    border: 1px solid black;
     color: white;
     padding: 10px 20px;
     text-align: center;
@@ -53,4 +53,9 @@ h2 {
     font-size: 16px;
     margin: 4px 2px;
     cursor: pointer;
+}
+
+/* Remove margin from edge of screen*/
+body {
+  margin: 0px 0px 0px 0px;
 }

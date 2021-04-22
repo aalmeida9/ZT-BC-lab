@@ -3,8 +3,8 @@
 
 <head>
   <title>Firewall Page</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}" media="screen">
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/form.css') }}">
 
@@ -27,7 +27,7 @@
     <br />
     <input type="radio" name="actions" value="ALLOW" checked> Allow
     <input type="radio" name="actions" value="DENY"> Deny
-    <input type="checkbox" name="direction" value="both" selected>Bidirectional
+    <input type="checkbox" name="direction" value="both" checked> Bidirectional
     <select name="dropdown">
       <option value="ICMP" selected>ICMP</option>
       <option value="ICMPv6">ICMPv6</option>

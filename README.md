@@ -1,31 +1,44 @@
 # Zero Trust Architecture with Blockchain virtual lab
 
-## Project setup
+This project utilizes Ubuntu 18.04 for the development environment.
 
-Ubuntu 18.04 is currently used for the development environment. Make project setup executable script
-
+### Manual Setup
 ```sh
-# clone and enter repository
+# Update and upgrade Ubuntu
+$ sudo apt-get update
+$ sudo apt-get upgrade
+# Install project dependencies
+$ sudo apt-get install git python-pip mininet python3-ryu
+# Clone repository and initialize Ryu submodule (not needed)
 $ git clone https://github.com/aalmeida9/ZT-BC-lab --recursive
-# if you cloned the repository without --recursive run:
-# git submodule update --init --recursive
+# Enter repository folder and install python dependencies
 $ cd ZT-BC-lab
-# setup and enter python virtual environment (optional)
-$ python3 -m venv venv
-$ source venv/bin/activate
-# install required python packages
 $ pip install -e .
-# Install Mininet
-$ sudo apt-get install mininet
-# Install Ryu
-$ cd ryu; pip install .
+$ cd project; sudo python run
 ```
 
-## Flask Applications
+## Project Startup
 
-The frontend web server and Blockchain application use the Flask microframework. The implementation of Blockchain is based on this repository: https://github.com/satwikkansal/python_blockchain_app/tree/ibm_blockchain_post
+The frontend web server and Blockchain application use the Flask microframework.
+ The implementation of Blockchain is based on this repository:
+ https://github.com/satwikkansal/python_blockchain_app/tree/ibm_blockchain_post
 
-Each of the following blocks of commands need to be run in different terminals in order for the project to work properly.
+### Frontend Web server
+
+The rest of the project systems can be started from the frontend via the startup
+page. In order to start the frontend run the following commands:
+
+ ```sh
+ $ cd project
+ # Use sudo to avoid repeating password entry during startup of other applications
+ $ sudo python runFrontend.py
+ ```
+
+## Manual Startup
+
+The different project systems can also be started seperately, which is helpful
+for testing and debugging. Each of the following blocks of commands need to be
+run in different terminals in order for the project to work properly.
 
 ### Blockchain startup
 
@@ -33,18 +46,13 @@ Each of the following blocks of commands need to be run in different terminals i
 $ python runBC.py
 ```
 
-### Frontend Web server
-
-```sh
-$ cd project
-$ python runFrontend.py
-```
-
 ## Network
 
 ### Network Emulation
 
-Network emulation uses Mininet. More information can be found here: http://mininet.org/
+Network emulation uses Mininet. Two network scripts can be executed via the
+frontend inside the startup page. Alternatively
+More information can be found here: http://mininet.org/
 
 ```sh
 # Run network emulation and create topology from command line
@@ -55,9 +63,13 @@ $ sudo python net.py
 
 ### Software Defined Networking (SDN) Controller
 
-SDN controller currently uses the Ryu framework for the firewall application. More information can be found here: https://ryu-sdn.org/
+SDN controller currently uses the Ryu framework for the firewall application.
+More information can be found here: https://ryu-sdn.org/
 
 ```sh
-# Old: ryu-manager ryu.app.rest_firewall
-$ ryu-manager sso.py ryu.app.ofctl_rest
+# Default Ryu applications can be run with: ryu-manager ryu.app.RYU_APP_NAME
+# Firewall Application:
+$ ryu-manager rest_firewall.py
+# Single Sign-On Application:
+$ ryu-manager rest_sso.py
 ```

@@ -4,7 +4,7 @@
 <head>
   <title>Main Hub</title>
   <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}" media="screen">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nav.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/card.css') }}">
 
@@ -12,28 +12,19 @@
 
 <body>
   <div class="topnav">
-    <div class="dropdown">
-      <button class="dropbtn">Main Hub
-        <i class="fa fa-caret-down"></i>
-      </button>
-      <div class="dropdown-content">
-        <a href="startup.html">Startup</a>
-        <a href="sso.html">Network Hosts</a>
-        <a href="certificate.html">Certificates</a>
-      </div>
-    </div>
+    <a href="index.html">Main Hub</a>
     <a href="firewall.html">Firewall</a>
     <a href="sso.html">Single Sign-On</a>
     <a href="about.html">About the Project</a>
   </div>
 
-  <h2>Network</h2>
+  <h2>Network Applications</h2>
 
   <div class="row">
     <div class="column">
       <div class="card">
-        <img src="network1.png" alt="" style="width:100%">
         <div class="container">
+          <br>
           <h4><b>Network Startup</b></h4>
           <p>Start the Mininet emulation, Ryu controller, and Blockchain.</p><br>
           <a href="startup.html"><button type="button" class="button">Startup</button></a>
@@ -43,8 +34,8 @@
 
     <div class="column">
       <div class="card">
-        <img src="img_avatar.png" alt="" style="width:100%">
         <div class="container">
+          <br>
           <h4><b>Configure Firewall Rules</b></h4>
           <p>Configure host to host rules for the Firewall app.</p><br>
           <a href="firewall.html"><button type="button" class="button">Firewall</button></a>
@@ -54,19 +45,19 @@
 
     <div class="column">
       <div class="card">
-        <img src="img_avatar.png" alt="" style="width:100%">
         <div class="container">
+          <br>
           <h4><b>Configure Single Sign-On</b></h4>
           <p>Configure network hosts with user roles for Single Sign-On</p><br>
-          <a href="demo.html"><button type="button" class="button">Network Hosts</button></a>
+          <a href="sso.html"><button type="button" class="button">Network Hosts</button></a>
         </div>
       </div>
     </div>
 
     <div class="column">
       <div class="card">
-        <img src="img_avatar.png" alt="" style="width:100%">
         <div class="container">
+          <br>
           <h4><b>Network Certificates</b></h4>
           <p>View digital certificates used by the Network</p>
           <br>
@@ -75,8 +66,6 @@
       </div>
     </div>
   </div>
-
-  <!-- <h2>Readme</h2> -->
 
 </body>
 

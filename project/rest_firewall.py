@@ -460,7 +460,6 @@ class FirewallController(ControllerBase):
 
     # POST /firewall/rules/{switchid}
     def set_rule(self, req, switchid, **_kwargs):
-        print("Test, req: {}".format(req))
         return self._set_rule(req, switchid)
 
     # POST /firewall/rules/{switchid}/{vlanid}
@@ -738,7 +737,6 @@ class Firewall(object):
         return REST_COMMAND_RESULT, msgs
 
     def _set_rule(self, cookie, rest, waiters, vlan_id):
-        print("Test _set_rule")
         priority = int(rest.get(REST_PRIORITY, ACL_FLOW_PRIORITY_MIN))
 
         if (priority < ACL_FLOW_PRIORITY_MIN
@@ -748,19 +746,15 @@ class Firewall(object):
 
         if vlan_id:
             rest[REST_DL_VLAN] = vlan_id
-        print("Rest {}".format(rest))
+        print("REST rule: {}".format(rest))
         match = Match.to_openflow(rest)
-        print("Match {}".format(match))
         if rest.get(REST_ACTION) == REST_ACTION_DENY:
             result = self.get_log_status(waiters)
             if result[REST_LOG_STATUS] == REST_STATUS_ENABLE:
                 rest[REST_ACTION] = REST_ACTION_PACKETIN
-        print("Rest {}".format(rest))
         actions = Action.to_openflow(rest)
-        print("Actions {}".format(actions))
         flow = self._to_of_flow(cookie=cookie, priority=priority,
                                 match=match, actions=actions)
-        print("Flow {}".format(flow))
 
         cmd = self.dp.ofproto.OFPFC_ADD
         try:

@@ -28,10 +28,13 @@ def netstart(topo):
 
                 # terminating process
                 os.kill(int(pid), signal.SIGKILL)
-
-            os.system("gnome-terminal -e 'bash -c \""+command+";bash\"'")
         except:
-            print("Error Encountered while running script")
+            print("Error encountered while terminating mininet script")
+        try:
+            os.system("gnome-terminal -- bash -c \""+command+"; bash\" &")
+        except:
+            print("Erorr encountered while executing mininet script")
+
     elif(topo == "1"):
         name = 'net2.py'
         try:
@@ -45,14 +48,14 @@ def netstart(topo):
 
                 # terminating process
                 os.kill(int(pid), signal.SIGKILL)
-
-            os.system("gnome-terminal -e 'bash -c \""+command+";bash\"'")
         except:
-            print("Error Encountered while running script")
+            print("Error encountered while terminating mininet script")
+        try:
+            os.system("gnome-terminal -- bash -c \""+command+"; bash\" &")
+        except:
+            print("Erorr encountered while executing mininet script")
 
     return redirect('/startup')
-
-
 
 # 'Ryu Firewall Startup'
 @app.route("/FWstart")
@@ -70,16 +73,20 @@ def FWstart():
             # terminating process
             os.kill(int(pid), signal.SIGKILL)
     except:
-        print("Error Encountered while running script")
-    #cdCommand = 'cd ..'
-    ryuCommand = 'ryu-manager firewall.py'
-    os.system("gnome-terminal -e 'bash -c \""+ryuCommand+";bash\"'")
+        print("Error encountered while termininating SSO")
+
+    try:
+        ryuCommand = 'ryu-manager rest_firewall.py'
+        os.system("gnome-terminal -- bash -c \""+ryuCommand+"; bash\" &")
+    except:
+        print("Error encountered while executing FW")
+
     return redirect('/startup')
 
 # 'Ryu Single Sign-On Startup'
 @app.route("/SSOstart")
 def SSOstart():
-    name = 'firewall.py'
+    name = 'rest_firewall.py'
     try:
 
         # iterating through each instance of the proess
@@ -93,55 +100,22 @@ def SSOstart():
             os.kill(int(pid), signal.SIGKILL)
     except:
         print("Error Encountered while running script")
-    #cdCommand = 'cd ..'
-    ryuCommand = 'ryu-manager rest_sso.py'
-    os.system("gnome-terminal -e 'bash -c \""+ryuCommand+";bash\"'")
+
+    try:
+        ryuCommand = 'ryu-manager rest_sso.py'
+        os.system("gnome-terminal -- bash -c \""+ryuCommand+"; bash\" &")
+    except:
+        print("Error encountered while executing SSO")
+    #os.system("gnome-terminal -e 'bash -c \""+ryuCommand+";bash\"'")
     return redirect('/startup')
 
 # 'BC Start'
 @app.route("/bcstart")
 def bcstart():
-    #cdCommand = 'cd ..'
-    bcCommand = 'sudo python runBC.py'
-    os.system("gnome-terminal -e 'bash -c \""+bcCommand+";bash\"'")
-    return redirect('/startup')
-
-# 'Kill RYU'
-@app.route("/killRyu")
-def killRyu():
-    name = 'firewall.py'
     try:
-
-        # iterating through each instance of the proess
-        for line in os.popen("ps ax | grep " + name + " | grep -v grep"):
-            fields = line.split()
-
-            # extracting Process ID from the output
-            pid = fields[0]
-
-            # terminating process
-            os.kill(int(pid), signal.SIGKILL)
+        bcCommand = 'sudo python runBC.py'
+        os.system("gnome-terminal -- bash -c \""+bcCommand+"; bash\" &")
     except:
-        print("Error Encountered while running script")
-
-    return redirect('/startup')
-
-    # 'Kill Mini'
-@app.route("/killMini")
-def killMini():
-    name = 'net1.py'
-    try:
-
-        # iterating through each instance of the proess
-        for line in os.popen("ps ax | grep " + name + " | grep -v grep"):
-            fields = line.split()
-
-            # extracting Process ID from the output
-            pid = fields[0]
-
-            # terminating process
-            os.kill(int(pid), signal.SIGKILL)
-    except:
-        print("Error Encountered while running script")
+        print("Error encountered while executing BC")
 
     return redirect('/startup')
