@@ -11,24 +11,25 @@ $ sudo apt-get upgrade
 $ sudo apt-get install git python-pip mininet python3-ryu
 # Clone repository and initialize Ryu submodule (not needed)
 $ git clone https://github.com/aalmeida9/ZT-BC-lab --recursive
-# Enter repository folder and install python dependencies
+# Enter repository folder and install the python dependencies
 $ cd ZT-BC-lab
 $ pip install -e .
-$ cd project; sudo python run
+$ cd project; sudo python runFrontend.py
 ```
 
 ## Project Startup
 
-The frontend web server and Blockchain application use the Flask microframework.
- The implementation of Blockchain is based on this repository:
+Most of the project can started after starting the frontend via the
+startup page. The frontend web server and Blockchain application use the Flask
+web framework. The implementation of Blockchain is based on this repository:
  https://github.com/satwikkansal/python_blockchain_app/tree/ibm_blockchain_post
 
 ### Frontend Web server
 
-The rest of the project systems can be started from the frontend via the startup
-page. In order to start the frontend run the following commands:
+In order to start the frontend run the following commands:
 
  ```sh
+ # Enter the project directory, if not already there
  $ cd project
  # Use sudo to avoid repeating password entry during startup of other applications
  $ sudo python runFrontend.py
@@ -36,9 +37,10 @@ page. In order to start the frontend run the following commands:
 
 ## Manual Startup
 
-The different project systems can also be started seperately, which is helpful
+The different project systems can also be started separately, which is helpful
 for testing and debugging. Each of the following blocks of commands need to be
-run in different terminals in order for the project to work properly.
+run in different terminals in order for the project to work properly. Also, make
+sure the current directory is inside the project folder.
 
 ### Blockchain startup
 
@@ -50,8 +52,9 @@ $ python runBC.py
 
 ### Network Emulation
 
-Network emulation uses Mininet. Two network scripts can be executed via the
-frontend inside the startup page. Alternatively
+The network emulation uses Mininet. Two network scripts can be executed via the
+frontend inside the startup page. Alternatively, custom Mininet topologies can
+be executed via the command line.
 More information can be found here: http://mininet.org/
 
 ```sh
@@ -63,8 +66,8 @@ $ sudo python net.py
 
 ### Software Defined Networking (SDN) Controller
 
-SDN controller currently uses the Ryu framework for the firewall application.
-More information can be found here: https://ryu-sdn.org/
+The SDN controller uses the Ryu framework for the firewall and single sign-on
+applications. More information can be found here: https://ryu-sdn.org/
 
 ```sh
 # Default Ryu applications can be run with: ryu-manager ryu.app.RYU_APP_NAME
