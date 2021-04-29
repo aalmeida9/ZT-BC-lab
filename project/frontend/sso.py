@@ -139,11 +139,13 @@ def csr():
     PrivateFormat.TraditionalOpenSSL, NoEncryption())
 
     # consider link pem_req : public bytes and selected user : ip
-    pem_req = req.public_bytes(Encoding.PEM)
-    user = userList[int(request.form["userNum"])]
-    ip = user["ip"]
-
-    json_req = {"csr": pem_req, "ip": ip}
+    try:
+        pem_req = req.public_bytes(Encoding.PEM)
+        user = userList[int(request.form["userNum"])]
+        ip = user["ip"]
+        json_req = {"csr": pem_req, "ip": ip}
+    except:
+        print("Network user not selected")
 
     try:
         address = "{}/create_cert".format(BC_ADDRESS)

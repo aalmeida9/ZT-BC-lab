@@ -106,7 +106,10 @@ def runMinimalTopo():
 if __name__ == '__main__':
     # This runs if this file is executed directly, can also use 'debug'
     setLogLevel( 'info' )
-    runMinimalTopo()
+    try:
+        runMinimalTopo()
+    except:
+        print("Error executing Mininet likely due to other instance of Mininet running, if so rerun startup")
 
 # Allows the file to be imported using `mn --custom <filename> --topo minimal`
 topos = {
